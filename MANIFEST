@@ -1,0 +1,23 @@
+Changes
+lib/Net/GPSD3.pm
+lib/Net/GPSD3/Base.pm
+lib/Net/GPSD3/Return/DEVICE.pm
+lib/Net/GPSD3/Return/DEVICES.pm
+lib/Net/GPSD3/Return/ERROR.pm
+lib/Net/GPSD3/Return/Satellite.pm
+lib/Net/GPSD3/Return/SKY.pm
+lib/Net/GPSD3/Return/TPV.pm
+lib/Net/GPSD3/Return/Unknown.pm
+lib/Net/GPSD3/Return/VERSION.pm
+lib/Net/GPSD3/Return/WATCH.pm
+LICENSE
+Makefile.PL
+MANIFEST
+README
+scripts/Net-GPSD3.pl
+t/001_load.t
+t/002_TPV.t
+t/002_VERSION.t
+t/002_WATCH.t
+Todo
+META.yml                                 Module meta-data (added by MakeMaker)
