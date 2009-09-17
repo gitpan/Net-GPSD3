@@ -14,7 +14,7 @@ LICENSE
 Makefile.PL
 MANIFEST
 README
-scripts/Net-GPSD3.pl
+scripts/Net-GPSD3-Example.pl
 t/001_load.t
 t/002_TPV.t
 t/002_VERSION.t

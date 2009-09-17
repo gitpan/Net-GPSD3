@@ -1,10 +1,11 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
+$|=1;
 
 =head1 NAME
 
-Net-GPSD3.pl - Net::GPSD3 Example
+Net-GPSD3-Example.pl - Net::GPSD3 Example
 
 =cut
 

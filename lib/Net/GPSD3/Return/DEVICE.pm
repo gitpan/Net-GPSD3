@@ -3,11 +3,11 @@ use strict;
 use warnings;
 use base qw{Net::GPSD3::Return::Unknown};
 
-our $VERSION='0.01';
+our $VERSION='0.02';
 
 =head1 NAME
 
-Net::GPSD3::Return::VERSION - Net::GPSD3 Return Version Object
+Net::GPSD3::Return::DEVICE - Net::GPSD3 Return DEVICE Object
 
 =head1 SYNOPSIS
 

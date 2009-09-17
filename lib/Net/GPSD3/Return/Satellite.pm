@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use base qw{Net::GPSD3::Return::Unknown};
 
-our $VERSION='0.01';
+our $VERSION='0.02';
 
 =head1 NAME
 

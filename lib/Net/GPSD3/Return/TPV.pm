@@ -4,11 +4,11 @@ use warnings;
 use base qw{Net::GPSD3::Return::Unknown};
 use GPS::Point;
 
-our $VERSION='0.01';
+our $VERSION='0.02';
 
 =head1 NAME
 
-Net::GPSD3::Return::VERSION - Net::GPSD3 Return Version Object
+Net::GPSD3::Return::TPV - Net::GPSD3 Return TPV Object
 
 =head1 SYNOPSIS
 

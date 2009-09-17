@@ -5,7 +5,7 @@ use base qw{Net::GPSD3::Base};
 use IO::Socket::INET qw{};
 use JSON::XS qw{};
 
-our $VERSION='0.01';
+our $VERSION='0.02';
 
 =head1 NAME
 
@@ -163,8 +163,9 @@ sub default_handler {
             $object->speed || '',
             $object->track || '';
   } elsif ($object->class eq "SKY") {
-    printf "%s, Satellites: %s, Used: %s, PRNs: %s\n",
+    printf "%s, Time: %s, Satellites: %s, Used: %s, PRNs: %s\n",
             $object->class || '',
+            $object->time || '',
             $object->reported || '',
             $object->used || '',
             join(",", map {$_->{"PRN"}} grep {$_->{"used"}} $object->satellites),

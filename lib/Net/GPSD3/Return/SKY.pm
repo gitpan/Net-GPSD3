@@ -2,13 +2,13 @@ package Net::GPSD3::Return::SKY;
 use strict;
 use warnings;
 use base qw{Net::GPSD3::Return::Unknown};
-use UNIVERSAL;
+use Net::GPSD3::Return::Satellite;
 
-our $VERSION='0.01';
+our $VERSION='0.02';
 
 =head1 NAME
 
-Net::GPSD3::Return::VERSION - Net::GPSD3 Return Version Object
+Net::GPSD3::Return::SKY - Net::GPSD3 Return SKY Object
 
 =head1 SYNOPSIS
 
@@ -50,33 +50,46 @@ Count of satellites used in calculation
 
 sub used {
   my $self=shift;
-  my @data=grep {$_->{"used"}} $self->satellites;
-  return scalar(@data);
+  unless (defined($self->{"used"})) {
+    my @data=grep {$_->{"used"}} $self->satellites;
+    $self->{"used"}=scalar(@data);
+  }
+  return $self->{"used"};
 }
 
 =head2 satellites
 
-  my $satellites=$object->satellites(); #[{},...]
-  my @satellites=$object->satellites(); #({},...)
-  my $satellites=$object->satellites(1); #[bless{},...]
-  my @satellites=$object->satellites(1); #(bless{},...)
+  my $satellites=$sky->satellites(); #[{},...]
+  my @satellites=$sky->satellites(); #({},...)
 
 =cut
 
 sub satellites {
   my $self=shift;
-  my $flag=shift||0;
-  my $data=$self->{"satellites"};
-  $data=[] unless ref($data) eq "ARRAY";
-  if ($flag) {
-    my $class="Net::GPSD3::Return::Satellite";
-    $data=[map {$class->new(class  => "Satellite",
-                            parent => $self->parent,
-                            string => "", #Is this worth building this?
-                            %$_)} grep {ref($_) eq "HASH"} @$data];
-    
+  unless (ref($self->{"satellites"}) eq "ARRAY") {
+    $self->{"satellites"}=[];
   }
-  return wantarray ? @$data : $data;
+  return wantarray ? @{$self->{"satellites"}} : $self->{"satellites"};
+}
+
+=head2 satelliteObjects
+
+  my @satellites=$sky->satelliteObjects; #(bless{},...)
+  my $satellites=$sky->satelliteObjects; #[bless{},...]
+  
+=cut
+
+sub satelliteObjects {
+  my $self=shift;
+  unless (defined($self->{"satelliteObjects"})) {
+    $self->{"satelliteObjects"}=
+          [map {Net::GPSD3::Return::Satellite->new(
+                  class  => "Satellite",
+                  parent => $self->parent,
+                  string => "", #Is this worth building this?
+                  %$_)} grep {ref($_) eq "HASH"} $self->satellites];
+  }
+  return $self->{"satelliteObjects"};
 }
 
 =head1 BUGS
