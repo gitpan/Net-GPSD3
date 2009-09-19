@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use base qw{Net::GPSD3::Return::Unknown};
 
-our $VERSION='0.02';
+our $VERSION='0.03';
 
 =head1 NAME
 
@@ -13,11 +13,49 @@ Net::GPSD3::Return::DEVICES - Net::GPSD3 Return DEVICES Object
 
 =head1 DESCRIPTION
 
-=head1 CONSTRUCTOR
-
-=head2 new
-
 =head1 METHODS
+
+=head2 class
+
+Returns the object class
+
+=head2 string
+
+Returns the JSON string
+
+=head2 parent
+
+Return the parent Net::GPSD object
+
+=head2 devices
+
+  my @device=$devices->devices; #({},...)
+  my @device=$devices->devices; #[{},...]
+
+=cut
+
+sub devices {
+  my $self=shift;
+  $self->{"devices"}=[] unless ref($self->{"devices"}) eq "ARRAY";
+  return wantarray ? @{$self->{"devices"}} : $self->{"devices"};
+}
+
+=head2 deviceObjects
+
+  my @device=$devices->deviceObjects; #(bless{},...)
+  my @device=$devices->deviceObjects; #[bless{},...]
+
+=cut
+
+sub deviceObjects {
+  my $self=shift;
+  unless (defined $self->{"deviceObjects"}) {
+    $self->{"deviceObjects"}=[
+      map {$self->parent->constructor(%$_, string=>$self->parent->encode($_))}
+        grep {ref($_) eq "HASH"} $self->devices];
+  }
+  return wantarray ? @{$self->{"deviceObjects"}} : $self->{"deviceObjects"};
+}
 
 =head1 BUGS
 

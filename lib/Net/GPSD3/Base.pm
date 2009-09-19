@@ -2,7 +2,7 @@ package Net::GPSD3::Base;
 use strict;
 use warnings;
 
-our $VERSION='0.01';
+our $VERSION='0.03';
 
 =head1 NAME
 
@@ -30,6 +30,8 @@ sub new {
 }
 
 =head1 METHODS
+
+=head2 initialize
 
 =cut
 

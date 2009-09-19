@@ -15,7 +15,13 @@ Makefile.PL
 MANIFEST
 README
 scripts/Net-GPSD3-Example.pl
+scripts/Net-GPSD3-Handler.pl
 t/001_load.t
+t/002_DEVICE.t
+t/002_DEVICES.t
+t/002_ERROR.t
+t/002_Satellite.t
+t/002_SKY.t
 t/002_TPV.t
 t/002_VERSION.t
 t/002_WATCH.t

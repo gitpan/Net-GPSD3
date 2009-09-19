@@ -3,11 +3,11 @@ use strict;
 use warnings;
 use base qw{Net::GPSD3::Base};
 
-our $VERSION='0.01';
+our $VERSION='0.03';
 
 =head1 NAME
 
-Net::GPSD3::Return::Unknown - Net::GPSD3 Return Object Base Class
+Net::GPSD3::Return::Unknown - Net::GPSD3 Return Base Class
 
 =head1 SYNOPSIS
 
@@ -23,17 +23,23 @@ Net::GPSD3::Return::Unknown - Net::GPSD3 Return Object Base Class
 
 =head2 parent
 
+Returns the parent Net::GPSD3 object
+
 =cut
 
 sub parent {shift->{"parent"}};
 
 =head2 class
 
+Returns the class string for the particular JSON message.  Classes in all upper case are from gpsd.  Classes with initial capital letter are from this Perl package.  Class in all lower case are currently reserved.  Private extension classes should use camel case.
+
 =cut
 
 sub class {shift->{"class"}};
 
 =head2 string
+
+This is the JSON string as passed over the TCP connection.
 
 =cut
 

@@ -2,10 +2,12 @@ package Net::GPSD3;
 use strict;
 use warnings;
 use base qw{Net::GPSD3::Base};
-use IO::Socket::INET qw{};
 use JSON::XS qw{};
+use IO::Socket::INET qw{};
+use Net::GPSD3::Return::Unknown;
+use Data::Dumper;
 
-our $VERSION='0.02';
+our $VERSION='0.03';
 
 =head1 NAME
 
@@ -24,7 +26,13 @@ Net::GPSD3 - Interface to the gpsd server daemon API Version 3 (JSON).
     print Dumper($object);
   }
 
+The Perl one liner
+
+  perl -MNet::GPSD3 -e 'Net::GPSD3->new->watch'
+
 =head1 DESCRIPTION
+
+Net::GPSD3 provides an object client interface to the gpsd server daemon utilizing the version 3.1 API. gpsd is an open source GPS deamon from http://gpsd.berlios.de/.
 
 =head1 CONSTRUCTOR
 
@@ -58,7 +66,7 @@ sub host {
   my $self=shift;
   if (@_) {
     $self->{'host'}=shift;
-    undef($self->{'sock'});
+    undef($self->{'socket'});
   }
   return $self->{'host'};
 }
@@ -75,24 +83,9 @@ sub port {
   my $self=shift;
   if (@_) {
     $self->{'port'}=shift;
-    undef($self->{'sock'});
+    undef($self->{'socket'});
   }
   return $self->{'port'};
-}
-
-=head2 sock
-
-  my $sock=$gpsd->sock;  #try to reconnect on failure
-
-=cut
-
-sub sock {
-  my $self=shift;
-  unless (defined($self->{"sock"}) and defined($self->{'sock'}->connected)) { 
-    $self->{"sock"}=IO::Socket::INET->new(PeerAddr=>$self->host,
-                                          PeerPort=>$self->port);
-  }
-  return $self->{'sock'};
 }
 
 =head2 watch
@@ -105,19 +98,31 @@ sub watch {
   my $self=shift;
   my @handler=$self->handlers;
   push @handler, \&default_handler unless scalar(@handler);
-  $self->sock->send(qq(?WATCH={"enable":true};\n));
+  $self->socket->send(qq(?WATCH={"enable":true};\n));
   my $object;
+  #man 8 gpsd - Each request returns a line of response text ended by a CR/LF.
   local $/="\r\n";
-  while (defined($_=$self->sock->getline)) {
+  while (defined($_=$self->socket->getline)) {
     chomp;
-    my $json=JSON::XS->new;
-    my $data=$json->decode($_);
-    my $object=$self->return(%$data, string=>$_);
-    #my $object=$data;
+    my $object=$self->constructor($self->decode($_), string=>$_);
     foreach my $handler (@handler) {
       &{$handler}($object);
     }
   }
+  return $self;
+}
+
+=head2 addHandler
+
+  $gpsd->addHandler(\&myHandler);
+  $gpsd->addHandler(\&myHandler1, \&myHandler2);
+
+=cut
+
+sub addHandler {
+  my $self=shift;
+  my $array=$self->handlers;
+  push @$array, @_ if @_;
   return $self;
 }
 
@@ -134,19 +139,7 @@ sub handlers {
   return wantarray ? @{$self->{'handler'}} : $self->{'handler'};
 }
 
-=head2 addHandler
-
-  $gpsd->addHandler(\&myHandler);
-  $gpsd->addHandler(\&myHandler1, \&myHandler2);
-
-=cut
-
-sub addHandler {
-  my $self=shift;
-  my $array=$self->handlers;
-  push @$array, @_ if @_;
-  return $self;
-}
+=head1 METHODS Internal
 
 =head2 default_handler
 
@@ -171,22 +164,85 @@ sub default_handler {
             join(",", map {$_->{"PRN"}} grep {$_->{"used"}} $object->satellites),
   } elsif ($object->class eq "VERSION") {
     printf "%s, Release: %s\n", $object->class, $object->release;
-  } else {
+  } elsif ($object->class eq "WATCH") {
     printf "%s, Enabled: %s\n", $object->class || '', $object->enable ? 1 : 0;
-    #use Data::Dumper;
-    #print Dumper($object);
+  } else {
+    print Dumper($object);
   }
 }
 
-sub return {
+=head2 socket
+
+Returns the cached IO::Socket::INET object
+
+  my $socket=$gpsd->socket;  #try to reconnect on failure
+
+=cut
+
+sub socket {
+  my $self=shift;
+  unless (defined($self->{'socket'}) and defined($self->{'socket'}->connected)) { 
+    $self->{"socket"}=IO::Socket::INET->new(PeerAddr=>$self->host,
+                                            PeerPort=>$self->port);
+  }
+  return $self->{'socket'};
+}
+
+=head2 json
+
+Returns the cached JSON::XS object
+
+=cut
+
+sub json {
+  my $self=shift;
+  #Do I need to support JSON::PP?
+  $self->{"json"}=JSON::XS->new unless ref($self->{"json"}) eq "JSON::XS";
+  return $self->{"json"};
+}
+
+=head2 decode
+
+Returns a perl data structure given a JSON formated string.
+
+  my %data=$gpsd->decode($string); #()
+  my $data=$gpsd->decode($string); #{}
+
+=cut
+
+sub decode {
+  my $self=shift;
+  my $string=shift;
+  my $data=$self->json->decode($string);
+  return wantarray ? %$data : $data;
+}
+
+=head2 encode
+
+Returns a JSON string from a perl data structure
+
+=cut
+
+sub encode {
+  my $self=shift;
+  my $data=shift;
+  my $string=$self->json->encode($data);
+  return $string;
+}
+
+=head2 constructor
+
+Constructs a class object by lazy loading the classes.
+
+=cut
+
+sub constructor {
   my $self=shift;
   my %data=@_;
   my $class=join("::", ref($self), "Return", $data{"class"});
   eval("use $class");
   if ($@) { #Failed to load class
-    my $unknown=join("::", ref($self), "Return", "Unknown");
-    eval("use $unknown");
-    return $unknown->new(parent=>$self, %data);
+    return Net::GPSD3::Return::Unknown->new(parent=>$self, %data);
   } else {
     return $class->new(parent=>$self, %data);
   }

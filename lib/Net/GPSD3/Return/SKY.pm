@@ -4,7 +4,7 @@ use warnings;
 use base qw{Net::GPSD3::Return::Unknown};
 use Net::GPSD3::Return::Satellite;
 
-our $VERSION='0.02';
+our $VERSION='0.03';
 
 =head1 NAME
 
@@ -15,6 +15,18 @@ Net::GPSD3::Return::SKY - Net::GPSD3 Return SKY Object
 =head1 DESCRIPTION
 
 =head1 METHODS PROPERTIES
+
+=head2 class
+
+Returns the object class
+
+=head2 string
+
+Returns the JSON string
+
+=head2 parent
+
+Return the parent Net::GPSD object
 
 =head2 device
 
@@ -86,10 +98,10 @@ sub satelliteObjects {
           [map {Net::GPSD3::Return::Satellite->new(
                   class  => "Satellite",
                   parent => $self->parent,
-                  string => "", #Is this worth building this?
+                  string => $self->parent->encode($_),
                   %$_)} grep {ref($_) eq "HASH"} $self->satellites];
   }
-  return $self->{"satelliteObjects"};
+  return wantarray ? @{$self->{"satelliteObjects"}} : $self->{"satelliteObjects"};
 }
 
 =head1 BUGS

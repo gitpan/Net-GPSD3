@@ -4,7 +4,7 @@ use warnings;
 use base qw{Net::GPSD3::Return::Unknown};
 use GPS::Point;
 
-our $VERSION='0.02';
+our $VERSION='0.03';
 
 =head1 NAME
 
@@ -15,6 +15,18 @@ Net::GPSD3::Return::TPV - Net::GPSD3 Return TPV Object
 =head1 DESCRIPTION
 
 =head1 METHODS PROPERTIES
+
+=head2 class
+
+Returns the object class
+
+=head2 string
+
+Returns the JSON string
+
+=head2 parent
+
+Return the parent Net::GPSD object
 
 =head2 device
 
