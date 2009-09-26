@@ -16,7 +16,7 @@ $gpsd->watch;
 
 sub handler {
   my $object=shift;
-  if ($object->class eq "TPV") {
+  if ($object and $object->class eq "TPV") {
     printf "%s: %s, %s\n", $object->point->datetime->datetime,  $object->lat, $object->lon;
   }
 }

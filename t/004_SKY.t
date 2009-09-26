@@ -36,19 +36,19 @@ isa_ok($s->[0], 'HASH', 'satellites 3');
 is(scalar(@s), '9', 'satellites 4');
 isa_ok($s[0], 'HASH', 'satellites 5');
 
-$s=$object->satelliteObjects; 
-isa_ok($s, 'ARRAY', 'satellites 6');
-is(scalar(@$s), '9', 'satellites 7');
-isa_ok($s->[0], 'Net::GPSD3::Return::Satellite', 'satellites 8');
+$s=$object->Satellites; 
+isa_ok($s, 'ARRAY', 'Satellites 6');
+is(scalar(@$s), '9', 'Satellites 7');
+isa_ok($s->[0], 'Net::GPSD3::Return::Satellite', 'Satellites 8');
 isa_ok ($s->[0]->parent, 'Net::GPSD3');
 
 #Current architecture does not keep order...
 #is($s->[0]->string, '{"PRN":15,"el":75,"az":77,"ss":38,"used":true}', 'string');
 
-@s=$object->satelliteObjects; 
-is(scalar(@s), '9', 'satellites 9');
-isa_ok($s[0], 'Net::GPSD3::Return::Satellite', 'satellites 10');
+@s=$object->Satellites; 
+is(scalar(@s), '9', 'Satellites 9');
+isa_ok($s[0], 'Net::GPSD3::Return::Satellite', 'Satellites 10');
 
 my $satellite=$s->[0];
-isa_ok($satellite, 'Net::GPSD3::Return::Satellite', 'satellites 11');
+isa_ok($satellite, 'Net::GPSD3::Return::Satellite', 'Satellites 11');
 

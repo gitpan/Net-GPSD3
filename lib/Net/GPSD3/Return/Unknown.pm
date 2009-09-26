@@ -15,9 +15,7 @@ Net::GPSD3::Return::Unknown - Net::GPSD3 Return Base Class
 
 =head1 DESCRIPTION
 
-=head1 CONSTRUCTOR
-
-=head2 new
+Provides the base Perl object interface to all objects returned by the GPSD daemon.  This class is also used if the class is unknown.
 
 =head1 METHODS
 

@@ -11,7 +11,15 @@ Net::GPSD3::Return::Satellite - Net::GPSD3 Return Satellite Object
 
 =head1 SYNOPSIS
 
+  printf "PRN: %s, Elevation: %s, Azimuth %s\n" $object->PRN, $object->el, $object->az;
+
 =head1 DESCRIPTION
+
+Provides a Perl object interface to the Satellite data structure returned by the GPSD daemon.
+
+An example JSON string:
+
+  {"PRN":15,"el":77,"az":123,"ss":0, "used":false},
 
 =head1 METHODS
 
@@ -27,31 +35,49 @@ Returns the JSON string
 
 Return the parent Net::GPSD object
 
-=head2 PRN
+=head2 PRN, prn
+
+Returns the GPS Satellites Pseudo Random Number Identifier
 
 =cut
 
 sub PRN {shift->{"PRN"}};
 
+*prn=\&PRN;
+
 =head2 used
+
+Returns a L<JSON::XS::Boolean> true or false object.
 
 =cut
 
 sub used {shift->{"used"}};
 
-=head2 az
+=head2 az, azimuth
+
+Returns the azimuth, degrees from true north.
 
 =cut
 
 sub az {shift->{"az"}};
 
-=head2 el
+*azimuth=\&az;
+
+=head2 el, elevation
+
+Returns the Elevation in degrees.
 
 =cut
 
 sub el {shift->{"el"}};
 
+*elevation=\&el;
+
 =head2 ss
+
+Signal strength in dBHz.
+
+Note: C/N0 is dBHz usually, but trimbles can also emit poorly specified Amplitude Measurement Units. 
 
 =cut
 

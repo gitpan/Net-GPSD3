@@ -13,6 +13,8 @@ Net::GPSD3::Return::ERROR - Net::GPSD3 Return ERROR Object
 
 =head1 DESCRIPTION
 
+Provides a Perl object interface to the ERROR object returned by the GPSD daemon.
+
 =head1 METHODS
 
 =head2 class

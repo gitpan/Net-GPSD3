@@ -29,16 +29,16 @@ isa_ok($devices->[0], 'HASH', 'devices');
 is(scalar(@devices), '1', 'devices');
 isa_ok($devices[0], 'HASH', 'devices');
 
-$devices=$object->deviceObjects; 
+$devices=$object->Devices; 
 isa_ok($devices, 'ARRAY', 'devices');
-isa_ok($devices->[0], 'Net::GPSD3::Return::DEVICE', 'devices');
+isa_ok($devices->[0], 'Net::GPSD3::Return::DEVICE', 'Devices');
 
-@devices=$object->deviceObjects; 
-is(scalar(@devices), '1', 'devices');
-isa_ok($devices[0], 'Net::GPSD3::Return::DEVICE', 'devices');
+@devices=$object->Devices; 
+is(scalar(@devices), '1', 'Devices');
+isa_ok($devices[0], 'Net::GPSD3::Return::DEVICE', 'Devices');
 
 my $device=$devices->[0];
-isa_ok($device, 'Net::GPSD3::Return::DEVICE', 'devices');
+isa_ok($device, 'Net::GPSD3::Return::DEVICE', 'Devices');
 
 is($device->class, 'DEVICE', 'class');
 isa_ok ($device->parent, 'Net::GPSD3');

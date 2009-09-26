@@ -12,7 +12,41 @@ Net::GPSD3::Return::TPV - Net::GPSD3 Return TPV Object
 
 =head1 SYNOPSIS
 
+  printf "Time: %s, Lat: %s, Lon: %s\n", $object->time, $object->lat, $object->lon;
+
 =head1 DESCRIPTION
+
+Provides a Perl object interface to the Time-Velocity-Position (TVP) object returned by the GPSD daemon.
+
+Example JSON objects:
+
+  {
+    "class":"TPV",
+    "tag":"MID2",
+    "device":"/dev/ttyUSB0",
+    "time":1253593085.470,
+    "ept":0.005,
+    "lat":38.88945123,
+    "lon":-77.03522143,
+    "track":171.7249,
+    "speed":0.467,
+    "mode":2
+  }
+
+  {
+    "class":"TPV",
+    "tag":"MID2",
+    "device":"/dev/ttyUSB0",
+    "time":1253593667.430,
+    "ept":0.005,
+    "lat":38.88945123,
+    "lon":-77.03522143,
+    "alt":146.911,
+    "track":180.0000,
+    "speed":0.194,
+    "climb":-0.157,
+    "mode":3
+  }
 
 =head1 METHODS PROPERTIES
 

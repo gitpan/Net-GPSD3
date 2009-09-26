@@ -13,6 +13,8 @@ Net::GPSD3::Return::DEVICES - Net::GPSD3 Return DEVICES Object
 
 =head1 DESCRIPTION
 
+Provides a Perl object interface to the DEVICE object returned by the GPSD daemon.
+
 =head1 METHODS
 
 =head2 class
@@ -29,6 +31,8 @@ Return the parent Net::GPSD object
 
 =head2 devices
 
+Returns a list of device data structures.
+
   my @device=$devices->devices; #({},...)
   my @device=$devices->devices; #[{},...]
 
@@ -40,21 +44,23 @@ sub devices {
   return wantarray ? @{$self->{"devices"}} : $self->{"devices"};
 }
 
-=head2 deviceObjects
+=head2 Devices
 
-  my @device=$devices->deviceObjects; #(bless{},...)
-  my @device=$devices->deviceObjects; #[bless{},...]
+Returns a list of L<Net::GPSD3::Return::DEVICES> objects.
+
+  my @device=$devices->Devices; #(bless{},...)
+  my @device=$devices->Devices; #[bless{},...]
 
 =cut
 
-sub deviceObjects {
+sub Devices {
   my $self=shift;
-  unless (defined $self->{"deviceObjects"}) {
-    $self->{"deviceObjects"}=[
+  unless (defined $self->{"Devices"}) {
+    $self->{"Devices"}=[
       map {$self->parent->constructor(%$_, string=>$self->parent->encode($_))}
         grep {ref($_) eq "HASH"} $self->devices];
   }
-  return wantarray ? @{$self->{"deviceObjects"}} : $self->{"deviceObjects"};
+  return wantarray ? @{$self->{"Devices"}} : $self->{"Devices"};
 }
 
 =head1 BUGS

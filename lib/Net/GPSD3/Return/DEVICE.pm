@@ -13,6 +13,8 @@ Net::GPSD3::Return::DEVICE - Net::GPSD3 Return DEVICE Object
 
 =head1 DESCRIPTION
 
+Provides a Perl object interface to the DEVICE object returned by the GPSD daemon.
+
 =head1 METHODS
 
 =head2 class

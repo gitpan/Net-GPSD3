@@ -14,6 +14,31 @@ Net::GPSD3::Return::SKY - Net::GPSD3 Return SKY Object
 
 =head1 DESCRIPTION
 
+Provides a Perl object interface to the SKY object returned by the GPSD daemon.
+
+An example JSON object:
+
+  {
+    "class":"SKY",
+    "tag":"MID4",
+    "device":"/dev/ttyUSB0",
+    "time":1253593665.430,
+    "hdop":23.60,
+    "reported":9,
+    "satellites":
+      [
+        {"PRN":15,"el":77,"az":123,"ss":0, "used":false},
+        {"PRN":18,"el":25,"az":268,"ss":0, "used":false},
+        {"PRN":27,"el":13,"az":150,"ss":0, "used":false},
+        {"PRN":29,"el":47,"az":228,"ss":0, "used":false},
+        {"PRN":5, "el":39,"az":58, "ss":46,"used":true },
+        {"PRN":21,"el":41,"az":309,"ss":33,"used":true },
+        {"PRN":10,"el":32,"az":61, "ss":40,"used":true },
+        {"PRN":8, "el":12,"az":48, "ss":40,"used":true },
+        {"PRN":2, "el":9, "az":124,"ss":0, "used":false}
+      ]
+  }
+
 =head1 METHODS PROPERTIES
 
 =head2 class
@@ -71,6 +96,8 @@ sub used {
 
 =head2 satellites
 
+Returns a list of satellite data structures.
+
   my $satellites=$sky->satellites(); #[{},...]
   my @satellites=$sky->satellites(); #({},...)
 
@@ -84,24 +111,26 @@ sub satellites {
   return wantarray ? @{$self->{"satellites"}} : $self->{"satellites"};
 }
 
-=head2 satelliteObjects
+=head2 Satellites
 
-  my @satellites=$sky->satelliteObjects; #(bless{},...)
-  my $satellites=$sky->satelliteObjects; #[bless{},...]
+Returns a list of L<Net::GPSD3::Return::Satellite> objects.
+
+  my @satellites=$sky->Satellites; #(bless{},...)
+  my $satellites=$sky->Satellites; #[bless{},...]
   
 =cut
 
-sub satelliteObjects {
+sub Satellites {
   my $self=shift;
-  unless (defined($self->{"satelliteObjects"})) {
-    $self->{"satelliteObjects"}=
+  unless (defined($self->{"Satellites"})) {
+    $self->{"Satellites"}=
           [map {Net::GPSD3::Return::Satellite->new(
                   class  => "Satellite",
                   parent => $self->parent,
                   string => $self->parent->encode($_),
                   %$_)} grep {ref($_) eq "HASH"} $self->satellites];
   }
-  return wantarray ? @{$self->{"satelliteObjects"}} : $self->{"satelliteObjects"};
+  return wantarray ? @{$self->{"Satellites"}} : $self->{"Satellites"};
 }
 
 =head1 BUGS

@@ -6,8 +6,9 @@ use JSON::XS qw{};
 use IO::Socket::INET qw{};
 use Net::GPSD3::Return::Unknown;
 use Data::Dumper;
+use Time::HiRes qw{time};
 
-our $VERSION='0.03';
+our $VERSION='0.04';
 
 =head1 NAME
 
@@ -52,6 +53,7 @@ sub initialize {
   %$self=@_;
   $self->host('127.0.0.1') unless $self->host;
   $self->port(2947)        unless $self->port;
+  $self->intersperse(20)   unless defined $self->{"intersperse"}; #0 is off
 }
 
 =head2 host
@@ -99,19 +101,38 @@ sub watch {
   my @handler=$self->handlers;
   push @handler, \&default_handler unless scalar(@handler);
   $self->socket->send(qq(?WATCH={"enable":true};\n));
+  #$self->socket->send(qq(?WATCH={"raw":1};\n));
   my $object;
   #man 8 gpsd - Each request returns a line of response text ended by a CR/LF.
   local $/="\r\n";
+  my $counter=0;
   while (defined($_=$self->socket->getline)) {
     chomp;
     my $object=$self->constructor($self->decode($_), string=>$_);
     foreach my $handler (@handler) {
       &{$handler}($object);
     }
+    if ($self->intersperse > 0 and scalar(time) > $counter+$self->intersperse) {
+      $self->socket->send("?DEVICES;");
+      $counter=time;
+    }  
   }
   return $self;
 }
 
+=head2 intersperse
+
+Time in seconds to intersperse DEVICES objects into the WATCHER stream.  Disabled <= 0.
+
+  my $intersperse=$self->intersperse; #$ seconds
+
+=cut
+
+sub intersperse {
+  my $self=shift;
+  $self->{"intersperse"}=shift if @_;
+  return $self->{"intersperse"};
+}
 =head2 addHandler
 
   $gpsd->addHandler(\&myHandler);
@@ -148,13 +169,14 @@ sub handlers {
 sub default_handler {
   my $object=shift;
   if ($object->class eq "TPV") {
+    #print Dumper($object) unless defined ($object->track);
     printf "%s, Time: %s, Lat: %s, Lon: %s, Speed: %s, Heading: %s\n",
             $object->class || '',
             $object->time || '',
             $object->lat || '',
             $object->lon || '',
-            $object->speed || '',
-            $object->track || '';
+            $object->speed || 'n/a',
+            $object->track || 'n/a';
   } elsif ($object->class eq "SKY") {
     printf "%s, Time: %s, Satellites: %s, Used: %s, PRNs: %s\n",
             $object->class || '',
@@ -165,10 +187,17 @@ sub default_handler {
   } elsif ($object->class eq "VERSION") {
     printf "%s, Release: %s\n", $object->class, $object->release;
   } elsif ($object->class eq "WATCH") {
-    printf "%s, Enabled: %s\n", $object->class || '', $object->enable ? 1 : 0;
+    printf "%s, Enabled: %s\n", $object->class, $object->enable ? 1 : 0;
+  } elsif ($object->class eq "DEVICES") {
+    printf "%s, Devices: %s\n", $object->class,
+                                join(", ", map {sprintf("%s => %s", $_->path, $_->driver)}
+                                             $object->Devices);
+  } elsif ($object->class eq "ERROR") {
+    printf qq{%s, Message: "%s"\n}, $object->class, $object->message;
   } else {
     print Dumper($object);
   }
+  #print Dumper($object);
 }
 
 =head2 socket
@@ -181,9 +210,12 @@ Returns the cached IO::Socket::INET object
 
 sub socket {
   my $self=shift;
-  unless (defined($self->{'socket'}) and defined($self->{'socket'}->connected)) { 
+  unless (defined($self->{'socket'}) and
+            defined($self->{'socket'}->connected)) { 
     $self->{"socket"}=IO::Socket::INET->new(PeerAddr=>$self->host,
                                             PeerPort=>$self->port);
+    die(sprintf("Error: Cannot connect to gpsd://%s:%s/.\n",
+      $self->host, $self->port)) unless defined($self->{"socket"});
   }
   return $self->{'socket'};
 }
@@ -213,7 +245,10 @@ Returns a perl data structure given a JSON formated string.
 sub decode {
   my $self=shift;
   my $string=shift;
-  my $data=$self->json->decode($string);
+  my $data=eval {$self->json->decode($string)};
+  if ($@) {
+    $data={class=>"ERROR", message=>"Invalid JSON"};
+  }
   return wantarray ? %$data : $data;
 }
 
