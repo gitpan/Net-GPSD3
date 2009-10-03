@@ -18,3 +18,7 @@ Revision history for Perl module Net::GPSD3
   - Changed satelliteObjects to Satellites (still have satellites)
   - Changed DeviceObjects to Devices (still have devices)
   - Added Error trapping and better messages
+0.05 2009-09-28T18:31:00Z
+  - modified SKY->Satellites to reuse parent->constructor code.
+0.06 2009-10-03T5:34:00Z
+  - Satellite->reported property was dropped (now calculated)

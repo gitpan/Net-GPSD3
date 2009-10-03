@@ -2,9 +2,8 @@ package Net::GPSD3::Return::SKY;
 use strict;
 use warnings;
 use base qw{Net::GPSD3::Return::Unknown};
-use Net::GPSD3::Return::Satellite;
 
-our $VERSION='0.03';
+our $VERSION='0.06';
 
 =head1 NAME
 
@@ -77,7 +76,15 @@ Count of satellites in view
 
 =cut
 
-sub reported {shift->{"reported"}};
+sub reported {
+  my $self=shift;
+  unless (defined($self->{"reported"})) {
+    my @data=();
+    push @data, $self->satellites;
+    $self->{"reported"}=scalar(@data);
+  }
+  return $self->{"reported"};
+}
 
 =head2 used
 
@@ -88,7 +95,8 @@ Count of satellites used in calculation
 sub used {
   my $self=shift;
   unless (defined($self->{"used"})) {
-    my @data=grep {$_->{"used"}} $self->satellites;
+    my @data=();
+    push @data, grep {$_->{"used"}} $self->satellites;
     $self->{"used"}=scalar(@data);
   }
   return $self->{"used"};
@@ -123,12 +131,11 @@ Returns a list of L<Net::GPSD3::Return::Satellite> objects.
 sub Satellites {
   my $self=shift;
   unless (defined($self->{"Satellites"})) {
-    $self->{"Satellites"}=
-          [map {Net::GPSD3::Return::Satellite->new(
-                  class  => "Satellite",
-                  parent => $self->parent,
-                  string => $self->parent->encode($_),
-                  %$_)} grep {ref($_) eq "HASH"} $self->satellites];
+    $self->{"Satellites"}=[
+      map {$self->parent->constructor(%$_,
+                                      class=>"Satellite",
+                                      string=>$self->parent->encode($_))} 
+        grep {ref($_) eq "HASH"} $self->satellites];
   }
   return wantarray ? @{$self->{"Satellites"}} : $self->{"Satellites"};
 }

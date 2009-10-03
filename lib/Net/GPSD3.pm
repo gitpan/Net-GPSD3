@@ -8,7 +8,7 @@ use Net::GPSD3::Return::Unknown;
 use Data::Dumper;
 use Time::HiRes qw{time};
 
-our $VERSION='0.04';
+our $VERSION='0.06';
 
 =head1 NAME
 
@@ -33,7 +33,7 @@ The Perl one liner
 
 =head1 DESCRIPTION
 
-Net::GPSD3 provides an object client interface to the gpsd server daemon utilizing the version 3.1 API. gpsd is an open source GPS deamon from http://gpsd.berlios.de/.
+Net::GPSD3 provides an object client interface to the gpsd server daemon utilizing the version 3.1 API. gpsd is an open source GPS deamon from http://gpsd.berlios.de/.  Support for Version 3 of the API (JSON) was adding to the daemon in version 2.40.  If your daemon is before 2.40 then please use the L<Net::GPSD> package.
 
 =head1 CONSTRUCTOR
 
@@ -181,8 +181,8 @@ sub default_handler {
     printf "%s, Time: %s, Satellites: %s, Used: %s, PRNs: %s\n",
             $object->class || '',
             $object->time || '',
-            $object->reported || '',
-            $object->used || '',
+            $object->reported || 0,
+            $object->used || 0,
             join(",", map {$_->{"PRN"}} grep {$_->{"used"}} $object->satellites),
   } elsif ($object->class eq "VERSION") {
     printf "%s, Release: %s\n", $object->class, $object->release;
@@ -269,11 +269,19 @@ sub encode {
 
 Constructs a class object by lazy loading the classes.
 
+  my $obj=$gpsd->constructor(%$data);
+  my $obj=$gpsd->constructor(class=>"DEVICE",
+                             string=>'{...}',
+                             ...);
+
+Returns and object in the Net::GPSD3::Return::* namespace.
+
 =cut
 
 sub constructor {
   my $self=shift;
   my %data=@_;
+  $data{"class"}||="undef";
   my $class=join("::", ref($self), "Return", $data{"class"});
   eval("use $class");
   if ($@) { #Failed to load class
@@ -310,7 +318,7 @@ LICENSE file included with this module.
 
 =head1 SEE ALSO
 
-L<Net::GPSD>, L<GSP::Point>
+L<Net::GPSD>, L<GPS::Point>
 
 =cut
 

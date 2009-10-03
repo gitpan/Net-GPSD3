@@ -1,7 +1,10 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
+use Data::Dumper qw{Dumper};
 $|=1;
+
+my $debug=shift || 0;
 
 =head1 NAME
 
@@ -19,6 +22,7 @@ sub handler {
   if ($object and $object->class eq "TPV") {
     printf "%s: %s, %s\n", $object->point->datetime->datetime,  $object->lat, $object->lon;
   }
+  print Dumper($object) if $debug;
 }
 
 =head1 EXAMPLE OUTPUT
