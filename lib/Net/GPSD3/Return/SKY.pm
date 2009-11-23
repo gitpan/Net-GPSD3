@@ -2,8 +2,9 @@ package Net::GPSD3::Return::SKY;
 use strict;
 use warnings;
 use base qw{Net::GPSD3::Return::Unknown};
+use DateTime;
 
-our $VERSION='0.06';
+our $VERSION='0.07';
 
 =head1 NAME
 
@@ -69,6 +70,31 @@ sub tag {shift->{"tag"}};
 =cut
 
 sub time {shift->{"time"}};
+
+=head2 datetime
+
+Returns a L<DateTime> object
+
+=cut
+
+sub datetime {
+  my $self=shift;
+  unless (defined($self->{"datetime"})) {
+    $self->{"datetime"}=DateTime->from_epoch(epoch=>$self->time);
+  }
+  return $self->{"datetime"};
+}
+
+=head2 strftime
+
+Returns the formatted datetime
+
+=cut
+
+sub strftime {
+  my $self=shift;
+  return $self->datetime->strftime($self->parent->strftime);
+}
 
 =head2 reported
 

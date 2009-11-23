@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use base qw{Net::GPSD3::Return::Unknown};
 
-our $VERSION='0.03';
+our $VERSION='0.07';
 
 =head1 NAME
 
@@ -35,23 +35,36 @@ Return the parent Net::GPSD object
 
 sub release {shift->{"release"}};
 
-=head2 rev
+=head2 rev, revision
 
 =cut
+
+*revision=\&rev;
 
 sub rev {shift->{"rev"}};
 
-=head2 api_major
+=head2 proto, protocol
 
 =cut
 
-sub api_major {shift->{"api_major"}};
+*protocol=\&proto;
 
-=head2 api_minor
+sub proto {
+  my $self=shift;
+  return join(".", $self->proto_major, $self->proto_minor);
+}
+
+=head2 proto_major
 
 =cut
 
-sub api_minor {shift->{"api_minor"}};
+sub proto_major {shift->{"proto_major"}};
+
+=head2 proto_minor
+
+=cut
+
+sub proto_minor {shift->{"proto_minor"}};
 
 =head1 BUGS
 

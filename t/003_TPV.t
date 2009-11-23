@@ -2,7 +2,7 @@
 
 # t/001_load.t - check module loading and create testing directory
 
-use Test::More tests => 25;
+use Test::More tests => 26;
 
 BEGIN { use_ok( 'Net::GPSD3' ); }
 
@@ -24,6 +24,9 @@ is($object->point->tag, "RMC", "tag");
 is($object->device, "/dev/ttyUSB0", "device");
 is($object->time, "1253334480.119", "time");
 is($object->point->time, "1253334480.119", "time");
+#rounding issues
+#is($object->strftime, "2009-09-19T04:28:00.119", "datetime");
+is($object->point->datetime->datetime, "2009-09-19T04:28:00", "datetime");
 is($object->ept, "0.005", "ept");
 is($object->lat, "38.949656667", "lat");
 is($object->point->lat, '38.949656667', 'lat');

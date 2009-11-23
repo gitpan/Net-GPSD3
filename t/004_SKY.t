@@ -2,7 +2,7 @@
 
 # t/001_load.t - check module loading and create testing directory
 
-use Test::More tests => 23;
+use Test::More tests => 24;
 
 BEGIN { use_ok( 'Net::GPSD3' ); }
 
@@ -21,6 +21,7 @@ is($object->string, $string, 'string');
 is($object->tag, 'GSV', 'tag');
 is($object->device, '/dev/ttyUSB0', 'device');
 is($object->time, '1253336487.996', 'time');
+is($object->strftime($object->strftime), '2009-09-19T05:01:27.996', 'datetime');
 is($object->reported, '9', 'reported');
 is($object->used, '5', 'reported');
 

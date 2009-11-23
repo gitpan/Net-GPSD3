@@ -8,7 +8,7 @@ use Net::GPSD3::Return::Unknown;
 use Data::Dumper;
 use Time::HiRes qw{time};
 
-our $VERSION='0.06';
+our $VERSION='0.07';
 
 =head1 NAME
 
@@ -101,11 +101,10 @@ sub watch {
   my @handler=$self->handlers;
   push @handler, \&default_handler unless scalar(@handler);
   $self->socket->send(qq(?WATCH={"enable":true};\n));
-  #$self->socket->send(qq(?WATCH={"raw":1};\n));
   my $object;
   #man 8 gpsd - Each request returns a line of response text ended by a CR/LF.
   local $/="\r\n";
-  my $counter=0;
+  my $counter=time;
   while (defined($_=$self->socket->getline)) {
     chomp;
     my $object=$self->constructor($self->decode($_), string=>$_);
@@ -171,29 +170,49 @@ sub default_handler {
   if ($object->class eq "TPV") {
     #print Dumper($object) unless defined ($object->track);
     printf "%s, Time: %s, Lat: %s, Lon: %s, Speed: %s, Heading: %s\n",
-            $object->class || '',
-            $object->time || '',
-            $object->lat || '',
-            $object->lon || '',
-            $object->speed || 'n/a',
-            $object->track || 'n/a';
+             $object->class,
+             $object->strftime,
+             $object->lat,
+             $object->lon,
+             $object->speed,
+             $object->track;
   } elsif ($object->class eq "SKY") {
     printf "%s, Time: %s, Satellites: %s, Used: %s, PRNs: %s\n",
-            $object->class || '',
-            $object->time || '',
-            $object->reported || 0,
-            $object->used || 0,
-            join(",", map {$_->{"PRN"}} grep {$_->{"used"}} $object->satellites),
+             $object->class,
+             $object->strftime,
+             $object->reported,
+             $object->used,
+             join(",", map {$_->prn} grep {$_->used} $object->Satellites),
   } elsif ($object->class eq "VERSION") {
-    printf "%s, Release: %s\n", $object->class, $object->release;
+    printf "%s, GPSD: %s (%s), %s: %s\n",
+             $object->class,
+             $object->release,
+             $object->revision,
+             ref($object->parent),
+             $object->parent->VERSION;
   } elsif ($object->class eq "WATCH") {
-    printf "%s, Enabled: %s\n", $object->class, $object->enable ? 1 : 0;
+    printf "%s, Enabled: %s\n",
+             $object->class,
+             $object->enable;
   } elsif ($object->class eq "DEVICES") {
     printf "%s, Devices: %s\n", $object->class,
-                                join(", ", map {sprintf("%s => %s", $_->path, $_->driver)}
-                                             $object->Devices);
+             join(", ", map {sprintf("%s (%s bps) => %s (%s)",
+                               $_->path,
+                               $_->bps,
+                               $_->driver,
+                               $_->subtype)}
+               $object->Devices);
+  } elsif ($object->class eq "DEVICE") {
+    printf qq{%s, Device: %s (%s bps)=> %s (%s)\n},
+             $object->class,
+             $object->path,
+             $object->bps,
+             $object->driver,
+             $object->subtype;
   } elsif ($object->class eq "ERROR") {
-    printf qq{%s, Message: "%s"\n}, $object->class, $object->message;
+    printf qq{%s, Message: "%s"\n},
+             $object->class,
+             $object->message;
   } else {
     print Dumper($object);
   }
@@ -291,6 +310,16 @@ sub constructor {
   }
 }
 
+=head2 strftime
+
+The format the L<DateTime> objects
+
+=cut
+
+sub strftime {
+  return q{%Y-%m-%dT%H:%M:%S.%3N};
+}
+
 =head1 BUGS
 
 Log on RT and Send to gpsd-dev email list
@@ -301,17 +330,17 @@ Try gpsd-dev email list
 
 =head1 AUTHOR
 
-    Michael R. Davis
-    CPAN ID: MRDVT
-    STOP, LLC
-    domain=>michaelrdavis,tld=>com,account=>perl
-    http://www.stopllc.com/
+  Michael R. Davis
+  CPAN ID: MRDVT
+  STOP, LLC
+  domain=>michaelrdavis,tld=>com,account=>perl
+  http://www.stopllc.com/
 
 =head1 COPYRIGHT
 
 This program is free software licensed under the...
 
-	The BSD License
+  The BSD License
 
 The full text of the license can be found in the
 LICENSE file included with this module.

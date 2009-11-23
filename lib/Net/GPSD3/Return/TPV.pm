@@ -4,7 +4,7 @@ use warnings;
 use base qw{Net::GPSD3::Return::Unknown};
 use GPS::Point;
 
-our $VERSION='0.03';
+our $VERSION='0.07';
 
 =head1 NAME
 
@@ -93,6 +93,23 @@ Seconds since the Unix epoch, UTC. May have a fractional part of up to .01sec pr
 =cut
 
 sub time {shift->{"time"}};
+
+=head2 datetime
+
+Returns a L<DateTime> object
+
+=cut
+
+sub datetime {shift->point->datetime};
+
+=head2 strftime
+
+=cut
+
+sub strftime {
+  my $self=shift;
+  return $self->datetime->strftime($self->parent->strftime);
+}
 
 =head2 lat
 
