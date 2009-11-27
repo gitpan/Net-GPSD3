@@ -1,7 +1,7 @@
 Revision history for Perl module Net::GPSD3
 
 0.01 2009-04-14T18:58:54Z
-  - gpsd version 3.1 API
+  - gpsd version 3.1 protocol
 0.02 2009-09-16T00:20:00Z
   - Documentation
   - Updated SKY->satellites
@@ -23,4 +23,4 @@ Revision history for Perl module Net::GPSD3
 0.06 2009-10-03T5:34:00Z
   - Satellite->reported property was dropped (now calculated)
 0.07 2009-11-22
-  - Support some changes in the API in 2.90dev.
+  - Support some changes in the protocol in 2.90dev.

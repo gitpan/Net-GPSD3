@@ -4,7 +4,7 @@ use warnings;
 use base qw{Net::GPSD3::Return::Unknown};
 use GPS::Point;
 
-our $VERSION='0.07';
+our $VERSION='0.08';
 
 =head1 NAME
 
@@ -68,7 +68,7 @@ Name of originating device.
 
 =cut
 
-sub device {shift->{"device"}};
+sub device {&_define(shift->{"device"})};
 
 =head2 tag
 
@@ -76,7 +76,7 @@ Type tag associated with this GPS sentence; from an NMEA device this is just the
 
 =cut
 
-sub tag {shift->{"tag"}};
+sub tag {&_define(shift->{"tag"})};
 
 =head2 mode
 
@@ -84,7 +84,7 @@ NMEA mode: %d, 0=no mode value yet seen, 1=no fix, 2=2D, 3=3D.
 
 =cut
 
-sub mode {shift->{"mode"}};
+sub mode {&_define(shift->{"mode"})};
 
 =head2 time
 
@@ -92,7 +92,7 @@ Seconds since the Unix epoch, UTC. May have a fractional part of up to .01sec pr
 
 =cut
 
-sub time {shift->{"time"}};
+sub time {&_define(shift->{"time"})};
 
 =head2 datetime
 
@@ -117,7 +117,7 @@ Latitude in degrees: +/- signifies West/East
 
 =cut
 
-sub lat {shift->{"lat"}};
+sub lat {&_define(shift->{"lat"})};
 
 =head2 lon
 
@@ -125,7 +125,7 @@ Longitude in degrees: +/- signifies North/South.
 
 =cut
 
-sub lon {shift->{"lon"}};
+sub lon {&_define(shift->{"lon"})};
 
 =head2 alt
 
@@ -133,7 +133,7 @@ Altitude in meters.
 
 =cut
 
-sub alt {shift->{"alt"}};
+sub alt {&_define(shift->{"alt"})};
 
 =head2 speed
 
@@ -141,7 +141,7 @@ Speed over ground, meters per second.
 
 =cut
 
-sub speed {shift->{"speed"}};
+sub speed {&_define(shift->{"speed"})};
 
 =head2 track
 
@@ -149,7 +149,7 @@ Course over ground, degreesfrom true north.
 
 =cut
 
-sub track {shift->{"track"}};
+sub track {&_define(shift->{"track"})};
 
 =head2 climb
 
@@ -157,7 +157,7 @@ Climb (postive) or sink (negative) rate, meters per second.
 
 =cut
 
-sub climb {shift->{"climb"}};
+sub climb {&_define(shift->{"climb"})};
 
 =head2 ept
 
@@ -165,13 +165,13 @@ Estimated timestamp error (%f, seconds, 95% confidence).
 
 =cut
 
-sub ept {shift->{"ept"}};
+sub ept {&_define(shift->{"ept"})};
 
 =head2 epx
 
 =cut
 
-sub epx {shift->{"epx"}};
+sub epx {&_define(shift->{"epx"})};
 
 =head2 epy
 
@@ -179,7 +179,7 @@ Latitude error estimate in meters, 95% confidence.
 
 =cut
 
-sub epy {shift->{"epy"}};
+sub epy {&_define(shift->{"epy"})};
 
 =head2 epv
 
@@ -187,7 +187,7 @@ Estimated vertical error in meters, 95% confidence.
 
 =cut
 
-sub epv {shift->{"epv"}};
+sub epv {&_define(shift->{"epv"})};
 
 =head2 eps
 
@@ -195,7 +195,7 @@ Speed error estimate in meters/sec, 95% confifdence.
 
 =cut
 
-sub eps {shift->{"eps"}};
+sub eps {&_define(shift->{"eps"})};
 
 =head2 epd
 
@@ -203,7 +203,7 @@ Direction error estinmate in degrees, 95% confifdence.
 
 =cut
 
-sub epd {shift->{"epd"}};
+sub epd {&_define(shift->{"epd"})};
 
 =head2 epc
 
@@ -211,7 +211,7 @@ Climb/sink error estinmate in meters/sec, 95% confifdence.
 
 =cut
 
-sub epc {shift->{"epc"}};
+sub epc {&_define(shift->{"epc"})};
 
 =head1 METHODS VALUE ADDED
 
@@ -245,6 +245,15 @@ sub point {
   return $self->{"point"};
 }
 
+=head2 _define
+
+=cut
+
+sub _define {
+  my $x=shift;
+  return defined($x) ? $x : '';
+}
+
 =head1 BUGS
 
 Log on RT and Send to gpsd-dev email list
@@ -255,24 +264,24 @@ Try gpsd-dev email list
 
 =head1 AUTHOR
 
-    Michael R. Davis
-    CPAN ID: MRDVT
-    STOP, LLC
-    domain=>michaelrdavis,tld=>com,account=>perl
-    http://www.stopllc.com/
+  Michael R. Davis
+  CPAN ID: MRDVT
+  STOP, LLC
+  domain=>michaelrdavis,tld=>com,account=>perl
+  http://www.stopllc.com/
 
 =head1 COPYRIGHT
 
 This program is free software licensed under the...
 
-	The BSD License
+  The BSD License
 
 The full text of the license can be found in the
 LICENSE file included with this module.
 
 =head1 SEE ALSO
 
-L<Net::GPSD3>
+L<Net::GPSD3>, L<GPS::Point>, L<Net::GPSD3::Return::Unknown>
 
 =cut
 

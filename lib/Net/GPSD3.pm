@@ -5,14 +5,14 @@ use base qw{Net::GPSD3::Base};
 use JSON::XS qw{};
 use IO::Socket::INET qw{};
 use Net::GPSD3::Return::Unknown;
-use Data::Dumper;
 use Time::HiRes qw{time};
+#use Data::Dumper;
 
-our $VERSION='0.07';
+our $VERSION='0.08';
 
 =head1 NAME
 
-Net::GPSD3 - Interface to the gpsd server daemon API Version 3 (JSON).
+Net::GPSD3 - Interface to the gpsd server daemon protocol version 3 (JSON).
 
 =head1 SYNOPSIS
 
@@ -33,7 +33,7 @@ The Perl one liner
 
 =head1 DESCRIPTION
 
-Net::GPSD3 provides an object client interface to the gpsd server daemon utilizing the version 3.1 API. gpsd is an open source GPS deamon from http://gpsd.berlios.de/.  Support for Version 3 of the API (JSON) was adding to the daemon in version 2.40.  If your daemon is before 2.40 then please use the L<Net::GPSD> package.
+Net::GPSD3 provides an object client interface to the gpsd server daemon utilizing the version 3.1 protocol. gpsd is an open source GPS deamon from http://gpsd.berlios.de/.  Support for Version 3 of the protocol (JSON) was adding to the daemon in version 2.90.  If your daemon is before 2.90 then please use the L<Net::GPSD> package.
 
 =head1 CONSTRUCTOR
 
@@ -214,7 +214,8 @@ sub default_handler {
              $object->class,
              $object->message;
   } else {
-    print Dumper($object);
+    warn(sprintf(qq{Warning: Unknown class "%s" for object "%s".}, $object->class, ref($object)));
+    #print Dumper($object);
   }
   #print Dumper($object);
 }
@@ -317,7 +318,7 @@ The format the L<DateTime> objects
 =cut
 
 sub strftime {
-  return q{%Y-%m-%dT%H:%M:%S.%3N};
+  return shift->{'strftime'} || q{%Y-%m-%dT%H:%M:%S.%3N};
 }
 
 =head1 BUGS
@@ -347,7 +348,7 @@ LICENSE file included with this module.
 
 =head1 SEE ALSO
 
-L<Net::GPSD>, L<GPS::Point>
+L<Net::GPSD>, L<GPS::Point>, L<JSON::XS>, L<IO::Socket::INET>, L<Time::HiRes>
 
 =cut
 
