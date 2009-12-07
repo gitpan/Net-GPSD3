@@ -6,9 +6,10 @@ use JSON::XS qw{};
 use IO::Socket::INET qw{};
 use Net::GPSD3::Return::Unknown;
 use Time::HiRes qw{time};
+use DateTime;
 #use Data::Dumper;
 
-our $VERSION='0.08';
+our $VERSION='0.09';
 
 =head1 NAME
 
@@ -100,7 +101,7 @@ sub watch {
   my $self=shift;
   my @handler=$self->handlers;
   push @handler, \&default_handler unless scalar(@handler);
-  $self->socket->send(qq(?WATCH={"enable":true};\n));
+  $self->socket->send(qq(?WATCH={"enable":true,"json":true};\n));
   my $object;
   #man 8 gpsd - Each request returns a line of response text ended by a CR/LF.
   local $/="\r\n";
@@ -169,7 +170,8 @@ sub default_handler {
   my $object=shift;
   if ($object->class eq "TPV") {
     #print Dumper($object) unless defined ($object->track);
-    printf "%s, Time: %s, Lat: %s, Lon: %s, Speed: %s, Heading: %s\n",
+    printf "%s: %s, Time: %s, Lat: %s, Lon: %s, Speed: %s, Heading: %s\n",
+             DateTime->now,
              $object->class,
              $object->strftime,
              $object->lat,
@@ -177,25 +179,30 @@ sub default_handler {
              $object->speed,
              $object->track;
   } elsif ($object->class eq "SKY") {
-    printf "%s, Time: %s, Satellites: %s, Used: %s, PRNs: %s\n",
+    printf "%s: %s, Time: %s, Satellites: %s, Used: %s, PRNs: %s\n",
+             DateTime->now,
              $object->class,
              $object->strftime,
              $object->reported,
              $object->used,
              join(",", map {$_->prn} grep {$_->used} $object->Satellites),
   } elsif ($object->class eq "VERSION") {
-    printf "%s, GPSD: %s (%s), %s: %s\n",
+    printf "%s: %s, GPSD: %s (%s), %s: %s\n",
+             DateTime->now,
              $object->class,
              $object->release,
              $object->revision,
              ref($object->parent),
              $object->parent->VERSION;
   } elsif ($object->class eq "WATCH") {
-    printf "%s, Enabled: %s\n",
+    printf "%s: %s, Enabled: %s\n",
+             DateTime->now,
              $object->class,
              $object->enable;
   } elsif ($object->class eq "DEVICES") {
-    printf "%s, Devices: %s\n", $object->class,
+    printf "%s: %s, Devices: %s\n",
+             DateTime->now,
+             $object->class,
              join(", ", map {sprintf("%s (%s bps) => %s (%s)",
                                $_->path,
                                $_->bps,
@@ -203,14 +210,16 @@ sub default_handler {
                                $_->subtype)}
                $object->Devices);
   } elsif ($object->class eq "DEVICE") {
-    printf qq{%s, Device: %s (%s bps)=> %s (%s)\n},
+    printf qq{%s: %s, Device: %s (%s bps)=> %s (%s)\n},
+             DateTime->now,
              $object->class,
              $object->path,
              $object->bps,
              $object->driver,
              $object->subtype;
   } elsif ($object->class eq "ERROR") {
-    printf qq{%s, Message: "%s"\n},
+    printf qq{%s: %s, Message: "%s"\n},
+             DateTime->now,
              $object->class,
              $object->message;
   } else {

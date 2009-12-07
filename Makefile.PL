@@ -13,5 +13,7 @@ WriteMakefile(
                      'JSON::XS'         => 0,
                      'IO::Socket::INET' => 0,
                      'Data::Dumper'     => 0,
+                     'DateTime'         => 0,
                     },
+
 );
