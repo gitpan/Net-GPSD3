@@ -9,7 +9,7 @@ WriteMakefile(
                      'warnings'         => 0,
                      'base'             => 0,
                      'Test::Simple'     => 0.44,
-                     'GPS::Point'       => 0,
+                     'GPS::Point'       => 0.10,
                      'JSON::XS'         => 0,
                      'IO::Socket::INET' => 0,
                      'Data::Dumper'     => 0,

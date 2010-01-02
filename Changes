@@ -26,3 +26,7 @@ Revision history for Perl module Net::GPSD3
   - Support some changes in the protocol in 2.90dev.
 0.08 2009-12-06
   - API changed between 2.90dev and 2.90 added json=>true to ?WATCH request
+0.09 2009-11-27
+  - Added DateTime to handler output
+0.10 2010-01-01
+  - Updated GPS::Point minimum required version to 0.10

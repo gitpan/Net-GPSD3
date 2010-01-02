@@ -4,6 +4,8 @@ use warnings;
 use Data::Dumper qw{Dumper};
 $|=1;
 
+my $host=shift || undef;
+my $port=shift || undef;
 my $debug=shift || 0;
 
 =head1 NAME
@@ -13,7 +15,7 @@ Net-GPSD3-Handler.pl - Net::GPSD3 Handler Example
 =cut
 
 use Net::GPSD3;
-my $gpsd=Net::GPSD3->new; #default host port
+my $gpsd=Net::GPSD3->new(host=>$host, port=>$port); #default host port is undef
 $gpsd->addHandler(\&handler);
 $gpsd->watch;
 

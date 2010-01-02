@@ -9,7 +9,7 @@ use Time::HiRes qw{time};
 use DateTime;
 #use Data::Dumper;
 
-our $VERSION='0.09';
+our $VERSION='0.10';
 
 =head1 NAME
 

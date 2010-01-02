@@ -10,7 +10,10 @@ Net-GPSD3-Example.pl - Net::GPSD3 Example
 =cut
 
 use Net::GPSD3;
-my $gpsd=Net::GPSD3->new; #default host port
+my $host=shift || undef;
+my $port=shift || undef;
+
+my $gpsd=Net::GPSD3->new(host=>$host, port=>$port); #default host port as undef
 $gpsd->watch;             #default handler
 
 =head1 EXAMPLE OUTPUT
