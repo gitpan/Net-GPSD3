@@ -3,13 +3,12 @@ use strict;
 use warnings;
 use base qw{Net::GPSD3::Base};
 use JSON::XS qw{};
-use IO::Socket::INET qw{};
+use IO::Socket::INET6 qw{};
 use Net::GPSD3::Return::Unknown;
 use Time::HiRes qw{time};
 use DateTime;
-#use Data::Dumper;
 
-our $VERSION='0.10';
+our $VERSION='0.11';
 
 =head1 NAME
 
@@ -46,6 +45,8 @@ Returns a new Net::GPSD3 object.
   my $gpsd=Net::GPSD3->new(host=>"127.0.0.1", port=>2947); #defaults
 
 =head1 METHODS
+
+=head2 initialize
 
 =cut
 
@@ -133,6 +134,7 @@ sub intersperse {
   $self->{"intersperse"}=shift if @_;
   return $self->{"intersperse"};
 }
+
 =head2 addHandler
 
   $gpsd->addHandler(\&myHandler);
@@ -231,7 +233,7 @@ sub default_handler {
 
 =head2 socket
 
-Returns the cached IO::Socket::INET object
+Returns the cached IO::Socket::INET6 object
 
   my $socket=$gpsd->socket;  #try to reconnect on failure
 
@@ -241,7 +243,7 @@ sub socket {
   my $self=shift;
   unless (defined($self->{'socket'}) and
             defined($self->{'socket'}->connected)) { 
-    $self->{"socket"}=IO::Socket::INET->new(PeerAddr=>$self->host,
+    $self->{"socket"}=IO::Socket::INET6->new(PeerAddr=>$self->host,
                                             PeerPort=>$self->port);
     die(sprintf("Error: Cannot connect to gpsd://%s:%s/.\n",
       $self->host, $self->port)) unless defined($self->{"socket"});
@@ -357,7 +359,7 @@ LICENSE file included with this module.
 
 =head1 SEE ALSO
 
-L<Net::GPSD>, L<GPS::Point>, L<JSON::XS>, L<IO::Socket::INET>, L<Time::HiRes>
+L<Net::GPSD>, L<GPS::Point>, L<JSON::XS>, L<IO::Socket::INET6>, L<Time::HiRes>
 
 =cut
 

@@ -30,3 +30,5 @@ Revision history for Perl module Net::GPSD3
   - Added DateTime to handler output
 0.10 2010-01-01
   - Updated GPS::Point minimum required version to 0.10
+0.11 2010-01-14
+  - Moved to IO::Socket::INET6 to support both IPv4 and IPv6
