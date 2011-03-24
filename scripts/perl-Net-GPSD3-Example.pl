@@ -5,7 +5,7 @@ $|=1;
 
 =head1 NAME
 
-Net-GPSD3-Example.pl - Net::GPSD3 Example
+perl-Net-GPSD3-Example.pl - Net::GPSD3 Watcher Example
 
 =cut
 

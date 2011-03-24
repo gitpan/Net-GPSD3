@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use base qw{Net::GPSD3::Return::Unknown};
 
-our $VERSION='0.08';
+our $VERSION='0.12';
 
 =head1 NAME
 
@@ -29,17 +29,33 @@ Returns the JSON string
 
 Return the parent Net::GPSD object
 
-=head2 enable
+=head2 enabled
 
 =cut
 
-sub enable {shift->{"enable"}};
+sub enabled {
+  my $self=shift;
+  return $self->{"enable"} || $self->{"enabled"}; #reverse once we move to the new protocol expected 3.5
+}
 
-=head2 scaled
+
+=head2 enable (deprecated)
 
 =cut
 
-sub scaled {shift->{"scaled"}};
+sub enable {shift->enabled(@_)}; #bad protocol name
+
+=head2 json
+
+=cut
+
+sub json {shift->{"json"}};
+
+=head2 nmea
+
+=cut
+
+sub nmea {shift->{"nmea"}};
 
 =head2 raw
 
@@ -47,11 +63,25 @@ sub scaled {shift->{"scaled"}};
 
 sub raw {shift->{"raw"}};
 
+=head2 scaled
+
+=cut
+
+sub scaled {shift->{"scaled"}};
+
+=head2 timing
+
+=cut
+
+sub timing {shift->{"timing"}};
+
 =head1 BUGS
 
 Log on RT and Send to gpsd-dev email list
 
 =head1 SUPPORT
+
+DavisNetworks.com supports all Perl applications including this package.
 
 Try gpsd-dev email list
 
@@ -69,8 +99,7 @@ This program is free software licensed under the...
 
   The BSD License
 
-The full text of the license can be found in the
-LICENSE file included with this module.
+The full text of the license can be found in the LICENSE file included with this module.
 
 =head1 SEE ALSO
 

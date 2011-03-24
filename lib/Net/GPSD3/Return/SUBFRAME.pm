@@ -1,4 +1,4 @@
-package Net::GPSD3::Return::VERSION;
+package Net::GPSD3::Return::SUBFRAME;
 use strict;
 use warnings;
 use base qw{Net::GPSD3::Return::Unknown};
@@ -7,15 +7,17 @@ our $VERSION='0.12';
 
 =head1 NAME
 
-Net::GPSD3::Return::VERSION - Net::GPSD3 Return VERSION Object
+Net::GPSD3::Return::SUBFRAME - Net::GPSD3 Return SUBFRAME Object
 
 =head1 SYNOPSIS
 
 =head1 DESCRIPTION
 
-Provides a Perl object interface to the VERSION object returned by the GPSD daemon.
+Provides a Perl object interface to the SUBFRAME object returned by the GPSD daemon.
 
-=head1 METHODS
+An example JSON object:
+
+=head1 METHODS PROPERTIES
 
 =head2 class
 
@@ -29,42 +31,11 @@ Returns the JSON string
 
 Return the parent Net::GPSD object
 
-=head2 release
+=head2 device
 
 =cut
 
-sub release {shift->{"release"}};
-
-=head2 rev, revision
-
-=cut
-
-*revision=\&rev;
-
-sub rev {shift->{"rev"}};
-
-=head2 proto, protocol
-
-=cut
-
-*protocol=\&proto;
-
-sub proto {
-  my $self=shift;
-  return join(".", $self->proto_major, $self->proto_minor);
-}
-
-=head2 proto_major
-
-=cut
-
-sub proto_major {shift->{"proto_major"}};
-
-=head2 proto_minor
-
-=cut
-
-sub proto_minor {shift->{"proto_minor"}};
+sub device {shift->{"device"}};
 
 =head1 BUGS
 
@@ -94,7 +65,7 @@ The full text of the license can be found in the LICENSE file included with this
 
 =head1 SEE ALSO
 
-L<Net::GPSD3>, L<Net::GPSD3::Return::Unknown>
+L<Net::GPSD3>, L<DateTime>, L<Net::GPSD3::Return::Unknown>
 
 =cut
 

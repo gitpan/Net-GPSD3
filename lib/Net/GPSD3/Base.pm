@@ -46,6 +46,8 @@ Log on RT and Send to gpsd-dev email list
 
 =head1 SUPPORT
 
+DavisNetworks.com supports all Perl applications including this package.
+
 Try gpsd-dev email list
 
 =head1 AUTHOR
@@ -62,8 +64,7 @@ This program is free software licensed under the...
 
   The BSD License
 
-The full text of the license can be found in the
-LICENSE file included with this module.
+The full text of the license can be found in the LICENSE file included with this module.
 
 =head1 SEE ALSO
 

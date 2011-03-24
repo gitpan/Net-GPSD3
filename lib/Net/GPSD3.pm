@@ -5,35 +5,43 @@ use base qw{Net::GPSD3::Base};
 use JSON::XS qw{};
 use IO::Socket::INET6 qw{};
 use Net::GPSD3::Return::Unknown;
-use Time::HiRes qw{time};
+use Net::GPSD3::Cache;
 use DateTime;
 
-our $VERSION='0.11';
+our $VERSION='0.12';
 
 =head1 NAME
 
-Net::GPSD3 - Interface to the gpsd server daemon protocol version 3 (JSON).
+Net::GPSD3 - Interface to the gpsd server daemon protocol versions 3 (JSON).
 
 =head1 SYNOPSIS
 
-  use Net::GPSD3;
-  my $gpsd=Net::GPSD3->new(host=>"127.0.0.1", port=>2947); #defaults
-  $gpsd->addHandler(\&myHandler);
-  $gpsd->watch;  
+=head2 Watch Interface
 
-  sub myHandler {
-    my $object=shift;
-    use Data::Dumper qw{Dumper};
-    print Dumper($object);
-  }
+  use Net::GPSD3;
+  my $gpsd=Net::GPSD3->new;
+  $gpsd->watch;
+
+=head2 Poll Interface
+
+  use Net::GPSD3;
+  use Data::Dumper qw{Dumper};
+  my $gpsd=Net::GPSD3->new;
+  my $poll=$gpsd->poll;
+  print Dumper($poll);
 
 The Perl one liner
 
   perl -MNet::GPSD3 -e 'Net::GPSD3->new->watch'
 
+Which Protocol is my gpsd using
+
+  perl -MNet::GPSD3 -e '$gpsd=Net::GPSD3->new; $gpsd->poll; printf "Protocol: %s\n", $gpsd->cache->VERSION->protocol;'
+  Protocol: 3.4
+
 =head1 DESCRIPTION
 
-Net::GPSD3 provides an object client interface to the gpsd server daemon utilizing the version 3.1 protocol. gpsd is an open source GPS deamon from http://gpsd.berlios.de/.  Support for Version 3 of the protocol (JSON) was adding to the daemon in version 2.90.  If your daemon is before 2.90 then please use the L<Net::GPSD> package.
+Net::GPSD3 provides an object client interface to the gpsd server daemon utilizing the version 3 protocol. gpsd is an open source GPS deamon from http://gpsd.berlios.de/.  Support for Version 3 of the protocol (JSON) was adding to the daemon in version 2.90.  If your daemon is before 2.90 (protocol 2.X), please use the L<Net::GPSD> package.
 
 =head1 CONSTRUCTOR
 
@@ -45,18 +53,6 @@ Returns a new Net::GPSD3 object.
   my $gpsd=Net::GPSD3->new(host=>"127.0.0.1", port=>2947); #defaults
 
 =head1 METHODS
-
-=head2 initialize
-
-=cut
-
-sub initialize {
-  my $self=shift;
-  %$self=@_;
-  $self->host('127.0.0.1') unless $self->host;
-  $self->port(2947)        unless $self->port;
-  $self->intersperse(20)   unless defined $self->{"intersperse"}; #0 is off
-}
 
 =head2 host
 
@@ -72,6 +68,7 @@ sub host {
     $self->{'host'}=shift;
     undef($self->{'socket'});
   }
+  $self->{'host'}="127.0.0.1" unless defined $self->{'host'};
   return $self->{'host'};
 }
 
@@ -89,12 +86,39 @@ sub port {
     $self->{'port'}=shift;
     undef($self->{'socket'});
   }
+  $self->{'port'}='2947' unless defined $self->{'port'};
   return $self->{'port'};
+}
+
+=head2 poll
+
+Send a Poll request to the gpsd server and returns a POLL object. The method also populates the cache object with the VERISON and DEVICES objects.
+
+  my $poll=$gpsd->poll; #isa Net::GPSD3::Return::POLL object
+
+=cut
+
+sub poll {
+  my $self=shift;
+  $self->socket->send(qq(?DEVICES;\n)) unless $self->cache->DEVICES;
+  $self->socket->send(qq(?POLL;\n));
+  my $object;
+  do { #Reads and caches VERSION and DEVICES
+    local $/="\r\n";
+    my $line=$self->socket->getline;
+    chomp $line;
+    $object=$self->constructor($self->decode($line), string=>$line);
+    $self->cache->add($object) unless $object->class eq "POLL";
+  } until $object->class eq "POLL";
+  return $object;
 }
 
 =head2 watch
 
+Calls all handlers that are registered in the handler method.
+
   $gpsd->watch;  #will not return unless something goes wrong.
+  
 
 =cut
 
@@ -102,43 +126,32 @@ sub watch {
   my $self=shift;
   my @handler=$self->handlers;
   push @handler, \&default_handler unless scalar(@handler);
+  #$self->socket->send(qq(?DEVICES;\n));
   $self->socket->send(qq(?WATCH={"enable":true,"json":true};\n));
   my $object;
   #man 8 gpsd - Each request returns a line of response text ended by a CR/LF.
   local $/="\r\n";
-  my $counter=time;
-  while (defined($_=$self->socket->getline)) {
-    chomp;
-    my $object=$self->constructor($self->decode($_), string=>$_);
+  my $line;
+  while (defined($line=$self->socket->getline)) { #This currently reads VERSION but that means that VERSION
+    #print "$line\n";
+    chomp $line;
+    my $object=$self->constructor($self->decode($line), string=>$line);
     foreach my $handler (@handler) {
       &{$handler}($object);
     }
-    if ($self->intersperse > 0 and scalar(time) > $counter+$self->intersperse) {
-      $self->socket->send("?DEVICES;");
-      $counter=time;
-    }  
+    $self->cache($object); #cache after handler so that the last point is available to the handler.
   }
   return $self;
 }
 
-=head2 intersperse
-
-Time in seconds to intersperse DEVICES objects into the WATCHER stream.  Disabled <= 0.
-
-  my $intersperse=$self->intersperse; #$ seconds
-
-=cut
-
-sub intersperse {
-  my $self=shift;
-  $self->{"intersperse"}=shift if @_;
-  return $self->{"intersperse"};
-}
-
 =head2 addHandler
+
+Adds handlers to the handler list.
 
   $gpsd->addHandler(\&myHandler);
   $gpsd->addHandler(\&myHandler1, \&myHandler2);
+
+A handler is a sub reference where the first argument is a Net::GPSD3::Return::* object.
 
 =cut
 
@@ -151,6 +164,8 @@ sub addHandler {
 
 =head2 handlers
 
+List of handlers that are called in order to process objects from the gpsd wathcer stream.  
+
   my @handler=$gpsd->handlers; #()
   my $handler=$gpsd->handlers; #[]
 
@@ -162,6 +177,19 @@ sub handlers {
   return wantarray ? @{$self->{'handler'}} : $self->{'handler'};
 }
 
+=head2 cache
+
+Returns the L<Net::GPSD3::Cache> caching object
+
+=cut
+
+sub cache {
+  my $self=shift;
+  $self->{"cache"}=Net::GPSD3::Cache->new(parent=>$self)
+    unless defined $self->{"cache"};
+  return $self->{"cache"};
+}
+
 =head1 METHODS Internal
 
 =head2 default_handler
@@ -170,24 +198,29 @@ sub handlers {
 
 sub default_handler {
   my $object=shift;
+  #use Data::Dumper qw{Dumper};
+  #print Dumper($object);
   if ($object->class eq "TPV") {
-    #print Dumper($object) unless defined ($object->track);
     printf "%s: %s, Time: %s, Lat: %s, Lon: %s, Speed: %s, Heading: %s\n",
              DateTime->now,
              $object->class,
-             $object->strftime,
+             $object->time,
              $object->lat,
              $object->lon,
              $object->speed,
              $object->track;
   } elsif ($object->class eq "SKY") {
-    printf "%s: %s, Time: %s, Satellites: %s, Used: %s, PRNs: %s\n",
+    printf "%s: %s, Satellites: %s, Used: %s, PRNs: %s\n",
              DateTime->now,
              $object->class,
-             $object->strftime,
              $object->reported,
              $object->used,
              join(",", map {$_->prn} grep {$_->used} $object->Satellites),
+  } elsif ($object->class eq "SUBFRAME") {
+    printf qq{%s: %s, Device: %s\n},
+             DateTime->now,
+             $object->class,
+             $object->device;
   } elsif ($object->class eq "VERSION") {
     printf "%s: %s, GPSD: %s (%s), %s: %s\n",
              DateTime->now,
@@ -202,17 +235,20 @@ sub default_handler {
              $object->class,
              $object->enable;
   } elsif ($object->class eq "DEVICES") {
+    my @device=$object->Devices;
+    foreach my $device (@device) {
+      if ($device->activated) {
+        $device=sprintf("%s (%s bps %s-%s)", $device->path, $device->bps, $device->driver, $device->subtype);
+      } else {
+        $device=$device->path;
+      }
+    }
     printf "%s: %s, Devices: %s\n",
              DateTime->now,
              $object->class,
-             join(", ", map {sprintf("%s (%s bps) => %s (%s)",
-                               $_->path,
-                               $_->bps,
-                               $_->driver,
-                               $_->subtype)}
-               $object->Devices);
+             join(", ", @device);
   } elsif ($object->class eq "DEVICE") {
-    printf qq{%s: %s, Device: %s (%s bps)=> %s (%s)\n},
+    printf qq{%s: %s, Device: %s (%s bps %s-%s)\n},
              DateTime->now,
              $object->class,
              $object->path,
@@ -233,7 +269,7 @@ sub default_handler {
 
 =head2 socket
 
-Returns the cached IO::Socket::INET6 object
+Returns the cached L<IO::Socket::INET6> object
 
   my $socket=$gpsd->socket;  #try to reconnect on failure
 
@@ -243,8 +279,10 @@ sub socket {
   my $self=shift;
   unless (defined($self->{'socket'}) and
             defined($self->{'socket'}->connected)) { 
-    $self->{"socket"}=IO::Socket::INET6->new(PeerAddr=>$self->host,
-                                            PeerPort=>$self->port);
+    $self->{"socket"}=IO::Socket::INET6->new(
+                        PeerAddr => $self->host,
+                        PeerPort => $self->port,
+                      );
     die(sprintf("Error: Cannot connect to gpsd://%s:%s/.\n",
       $self->host, $self->port)) unless defined($self->{"socket"});
   }
@@ -253,7 +291,7 @@ sub socket {
 
 =head2 json
 
-Returns the cached JSON::XS object
+Returns the cached L<JSON::XS> object
 
 =cut
 
@@ -314,29 +352,27 @@ sub constructor {
   my %data=@_;
   $data{"class"}||="undef";
   my $class=join("::", ref($self), "Return", $data{"class"});
+  my $object;
   eval("use $class");
   if ($@) { #Failed to load class
-    return Net::GPSD3::Return::Unknown->new(parent=>$self, %data);
+    $object=Net::GPSD3::Return::Unknown->new(parent=>$self, %data);
   } else {
-    return $class->new(parent=>$self, %data);
+    $object=$class->new(parent=>$self, %data);
   }
-}
-
-=head2 strftime
-
-The format the L<DateTime> objects
-
-=cut
-
-sub strftime {
-  return shift->{'strftime'} || q{%Y-%m-%dT%H:%M:%S.%3N};
+  return $object;
 }
 
 =head1 BUGS
 
 Log on RT and Send to gpsd-dev email list
 
+There are no to GPS devices tat ar a like and each GPS device has a differenet GPSD signature.  If your GPS device does not work out of the box with this package please send me a log of your device.
+
+
+
 =head1 SUPPORT
+
+DavisNetworks.com supports all Perl applications including this package.
 
 Try gpsd-dev email list
 
@@ -354,12 +390,11 @@ This program is free software licensed under the...
 
   The BSD License
 
-The full text of the license can be found in the
-LICENSE file included with this module.
+The full text of the license can be found in the LICENSE file included with this module.
 
 =head1 SEE ALSO
 
-L<Net::GPSD>, L<GPS::Point>, L<JSON::XS>, L<IO::Socket::INET6>, L<Time::HiRes>
+L<Net::GPSD>, L<GPS::Point>, L<JSON::XS>, L<IO::Socket::INET6>, L<DateTime>
 
 =cut
 

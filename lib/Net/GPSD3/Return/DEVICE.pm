@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use base qw{Net::GPSD3::Return::Unknown};
 
-our $VERSION='0.07';
+our $VERSION='0.12';
 
 =head1 NAME
 
@@ -71,6 +71,8 @@ sub native {shift->{"native"}};
 
 Time the device was activated, or 0 if it is being closed.
 
+Note: I expect this to change to either a boolean or a timestamp in the 3.5 protocol.
+
 =cut
 
 sub activated {shift->{"activated"}};
@@ -129,6 +131,8 @@ Log on RT and Send to gpsd-dev email list
 
 =head1 SUPPORT
 
+DavisNetworks.com supports all Perl applications including this package.
+
 Try gpsd-dev email list
 
 =head1 AUTHOR
@@ -145,8 +149,7 @@ This program is free software licensed under the...
 
   The BSD License
 
-The full text of the license can be found in the
-LICENSE file included with this module.
+The full text of the license can be found in the LICENSE file included with this module.
 
 =head1 SEE ALSO
 
