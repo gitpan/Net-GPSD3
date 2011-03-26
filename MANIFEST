@@ -5,6 +5,7 @@ lib/Net/GPSD3/Cache.pm
 lib/Net/GPSD3/Return/DEVICE.pm
 lib/Net/GPSD3/Return/DEVICES.pm
 lib/Net/GPSD3/Return/ERROR.pm
+lib/Net/GPSD3/Return/GST.pm
 lib/Net/GPSD3/Return/POLL.pm
 lib/Net/GPSD3/Return/Satellite.pm
 lib/Net/GPSD3/Return/SKY.pm

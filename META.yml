@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Net-GPSD3
-version:             0.12
+version:             0.13
 abstract:            Interface to the gpsd server daemon protocol versions 3 (JSON).
 license:             ~
 author:              

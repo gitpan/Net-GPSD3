@@ -8,7 +8,7 @@ use Net::GPSD3::Return::Unknown;
 use Net::GPSD3::Cache;
 use DateTime;
 
-our $VERSION='0.12';
+our $VERSION='0.13';
 
 =head1 NAME
 
@@ -366,9 +366,11 @@ sub constructor {
 
 Log on RT and Send to gpsd-dev email list
 
-There are no to GPS devices tat ar a like and each GPS device has a differenet GPSD signature.  If your GPS device does not work out of the box with this package please send me a log of your device.
+There are no two GPS devices that are alike.  Each GPS device has a different GPSD signature as well. If your GPS device does not work out of the box with this package, please send me a log of your devices JSON sentences.
 
+  echo '?POLL;' | nc gpsd.mainframe.cx 2947
 
+  echo '?WATCH={"enable":true,"json":true};' | nc gpsd.mainframe.cx 2947
 
 =head1 SUPPORT
 

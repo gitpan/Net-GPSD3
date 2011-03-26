@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use base qw{Net::GPSD3::Return::Unknown};
 
-our $VERSION='0.12';
+our $VERSION='0.13';
 
 =head1 NAME
 
@@ -11,7 +11,12 @@ Net::GPSD3::Return::Satellite - Net::GPSD3 Return Satellite Object
 
 =head1 SYNOPSIS
 
-  printf "PRN: %s, Elevation: %s, Azimuth %s\n" $object->PRN, $object->el, $object->az;
+  use Net::GPSD3 0.13;
+  my $gpsd = Net::GPSD3->new;
+  my $poll = $gpsd->poll;  #new method in 0.12
+  my $sky  = $poll->sky;   #new method in 0.13
+  printf "Reported: %s, Used: %s\n", $sky->reported, $sky->used;
+  printf "PRN: %s\n", join(", ", map {$_->used ? $_->prn : "-".$_->prn} $sky->Satellites);
 
 =head1 DESCRIPTION
 

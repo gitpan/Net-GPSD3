@@ -1,6 +1,6 @@
 # -*- perl -*-
 
-use Test::More tests => 47;
+use Test::More tests => 54;
 
 BEGIN { use_ok( 'Net::GPSD3' ); }
 BEGIN { use_ok( 'Net::GPSD3::Base' ); }
@@ -9,6 +9,7 @@ BEGIN { use_ok( 'Net::GPSD3::Return::DEVICE' ); }
 BEGIN { use_ok( 'Net::GPSD3::Return::DEVICES' ); }
 BEGIN { use_ok( 'Net::GPSD3::Return::ERROR' ); }
 BEGIN { use_ok( 'Net::GPSD3::Return::Satellite' ); }
+BEGIN { use_ok( 'Net::GPSD3::Return::GST' ); }
 BEGIN { use_ok( 'Net::GPSD3::Return::SKY' ); }
 BEGIN { use_ok( 'Net::GPSD3::Return::TPV' ); }
 BEGIN { use_ok( 'Net::GPSD3::Return::Unknown' ); }
@@ -48,13 +49,21 @@ isa_ok ($object, 'Net::GPSD3::Return::Satellite');
 isa_ok ($object, 'Net::GPSD3::Return::Unknown');
 isa_ok ($object, 'Net::GPSD3::Base');
 
+$object = Net::GPSD3::Return::GST->new();
+isa_ok ($object, 'Net::GPSD3::Return::GST');
+isa_ok ($object, 'Net::GPSD3::Return::Unknown::Timestamp');
+isa_ok ($object, 'Net::GPSD3::Return::Unknown');
+isa_ok ($object, 'Net::GPSD3::Base');
+
 $object = Net::GPSD3::Return::SKY->new();
 isa_ok ($object, 'Net::GPSD3::Return::SKY');
+isa_ok ($object, 'Net::GPSD3::Return::Unknown::Timestamp');
 isa_ok ($object, 'Net::GPSD3::Return::Unknown');
 isa_ok ($object, 'Net::GPSD3::Base');
 
 $object = Net::GPSD3::Return::TPV->new();
 isa_ok ($object, 'Net::GPSD3::Return::TPV');
+isa_ok ($object, 'Net::GPSD3::Return::Unknown::Timestamp');
 isa_ok ($object, 'Net::GPSD3::Return::Unknown');
 isa_ok ($object, 'Net::GPSD3::Base');
 

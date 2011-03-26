@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use base qw{Net::GPSD3::Return::Unknown::Timestamp};
 
-our $VERSION='0.12';
+our $VERSION='0.13';
 
 =head1 NAME
 
@@ -41,67 +41,100 @@ Return the parent Net::GPSD object
 
 sub active {shift->{"active"}};
 
-=head2 fixes
+=head2 fix
+
+Returns the first fix from the Fixes array or undef if none.
+
+  my $fix=$poll->fix #isa Net::GPSD3::Return::TPV or undef
+
+Note: I will try to keep this method consistant
 
 =cut
 
-sub fixes {
-  my $self=shift;
-  $self->{"fixes"}=[] unless ref($self->{"fixes"}) eq "ARRAY";
-  return wantarray ? @{$self->{"fixes"}} : $self->{"fixes"};
-}
+sub fix {shift->Fixes->[0]};
 
 =head2 Fixes
+
+Object wrapper around JSON data
+
+  my $fix=$poll->Fixes #isa [] of Net::GPSD3::Return::TPV objects
+  my @fix=$poll->Fixes #isa () of Net::GPSD3::Return::TPV objects
+
+Note: I'm not sure why this is an array from the protocol but do not count on this staying the same
 
 =cut
 
 sub Fixes {
   my $self=shift;
-  $self->{"Fixes"}=[map {$self->parent->constructor(%$_, string=>$self->parent->encode($_))} $self->fixes]
+  $self->{"Fixes"}=[map {$self->parent->constructor(%$_, string=>$self->parent->encode($_))} $self->_fixes]
     unless defined $self->{"Fixes"};
-  return $self->{"Fixes"};
+  return wantarray ? @{$self->{"Fixes"}} : $self->{"Fixes"};
 }
 
-=head2 gst
+sub _fixes {
+  my $self=shift;
+  $self->{"fixes"}=[] unless ref($self->{"fixes"}) eq "ARRAY";
+  return wantarray ? @{$self->{"fixes"}} : $self->{"fixes"};
+}
+
+=head2 sky
+
+Returns the first object from the Skyviews array or undef if none.
+
+  my $sky=$poll->sky #isa Net::GPSD3::Return::SKY or undef
+
+Note: I will try to keep this method consistant
 
 =cut
 
-sub gst {
-  my $self=shift;
-  $self->{"gst"}=[] unless ref($self->{"gst"}) eq "ARRAY";
-  return wantarray ? @{$self->{"gst"}} : $self->{"gst"};
-}
-
-=head2 Gst
-
-=cut
-
-sub Gst {
-  my $self=shift;
-  $self->{"Gst"}=[map {$self->parent->constructor(%$_, string=>$self->parent->encode($_))} $self->gst]
-    unless defined $self->{"Gst"};
-  return $self->{"Gst"};
-}
-
-=head2 skyviews
-
-=cut
-
-sub skyviews {
-  my $self=shift;
-  $self->{"skyviews"}=[] unless ref($self->{"skyviews"}) eq "ARRAY";
-  return wantarray ? @{$self->{"skyviews"}} : $self->{"skyviews"};
-}
+sub sky {shift->Skyviews->[0]};
 
 =head2 Skyviews
+
+Object wrapper around JSON data
+
+  my $sky=$poll->Skyviews #isa [] of Net::GPSD3::Return::SKY objects
+  my @sky=$poll->Skyviews #isa () of Net::GPSD3::Return::SKY objects
+
+Note: I'm not sure why this is an array from the protocol but do not count on this staying the same
 
 =cut
 
 sub Skyviews {
   my $self=shift;
-  $self->{"Skyviews"}=[map {$self->parent->constructor(%$_, string=>$self->parent->encode($_))} $self->skyviews]
+  $self->{"Skyviews"}=[map {$self->parent->constructor(%$_, string=>$self->parent->encode($_))} $self->_skyviews]
     unless defined $self->{"Skyviews"};
-  return $self->{"Skyviews"};
+  return wantarray ? @{$self->{"Skyviews"}} : $self->{"Skyviews"};
+}
+
+sub _skyviews {
+  my $self=shift;
+  $self->{"skyviews"}=[] unless ref($self->{"skyviews"}) eq "ARRAY";
+  return wantarray ? @{$self->{"skyviews"}} : $self->{"skyviews"};
+}
+
+=head2 Gst
+
+Object wrapper around JSON data
+
+  my $gst=$poll->Gst #isa [] of Net::GPSD3::Return::GST objects
+  my @gst=$poll->Gst #isa () of Net::GPSD3::Return::GST objects
+
+Note: I'm not sure why this is an array from the protocol but do not count on this staying the same
+
+=cut
+
+sub Gst {
+  my $self=shift;
+  $self->{"Gst"}=[map {$self->parent->constructor(%$_, string=>$self->parent->encode($_))} $self->_gst]
+    unless defined $self->{"Gst"};
+  return wantarray ? @{$self->{"Gst"}} : $self->{"Gst"};
+}
+
+sub _gst {
+  my $self=shift;
+  $self->{"gst"}=[] unless ref($self->{"gst"}) eq "ARRAY";
+  return wantarray ? @{$self->{"gst"}} : $self->{"gst"};
 }
 
 =head1 BUGS

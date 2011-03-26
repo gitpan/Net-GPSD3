@@ -1,6 +1,6 @@
 # -*- perl -*-
 
-use Test::More tests => 22;
+use Test::More tests => 24;
 
 BEGIN { use_ok( 'Net::GPSD3' ); }
 
@@ -72,13 +72,13 @@ is($object->active, "1", "active");
 is($object->time, "1300594345.64", "time");
 is($object->timestamp, "2011-03-20T04:12:25.64Z", "timestamp");
 
-isa_ok($object->skyviews, "ARRAY", "skyviews");
-is(scalar(@{$object->skyviews}), 1, "sizeof");
-isa_ok($object->skyviews->[0], "HASH");
+isa_ok($object->_skyviews, "ARRAY", "skyviews");
+is(scalar(@{$object->_skyviews}), 1, "sizeof");
+isa_ok($object->_skyviews->[0], "HASH");
 
-isa_ok($object->fixes, "ARRAY", "fixes");
-is(scalar(@{$object->fixes}), 1, "sizeof");
-isa_ok($object->fixes->[0], "HASH");
+isa_ok($object->_fixes, "ARRAY", "fixes");
+is(scalar(@{$object->_fixes}), 1, "sizeof");
+isa_ok($object->_fixes->[0], "HASH");
 
 isa_ok($object->Skyviews, "ARRAY", "Skyviews");
 is(scalar(@{$object->Skyviews}), 1, "sizeof");
@@ -88,3 +88,7 @@ isa_ok($object->Skyviews->[0]->Satellites, "ARRAY");
 isa_ok($object->Fixes, "ARRAY", "Fixes");
 is(scalar(@{$object->Fixes}), 1, "sizeof");
 isa_ok($object->Fixes->[0], "Net::GPSD3::Return::TPV");
+
+isa_ok($object->sky, "Net::GPSD3::Return::SKY");
+isa_ok($object->fix, "Net::GPSD3::Return::TPV");
+

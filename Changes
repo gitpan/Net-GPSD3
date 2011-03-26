@@ -3,7 +3,16 @@ Revision history for Perl module Net::GPSD3
 TODO
   - Write a POE capability interface
   - Support SUBFRAME object better
+  - Support GST object better
   - Add Tests for many gps devices
+
+0.13 2011-03-25
+  - Added poll->fix method
+  - Added poll->sky method
+  - Renamed internal method poll->fixes to _fixes
+  - Renamed internal method poll->skyviews to _skyviews
+  - Updated POLL documentation
+  - Added GST object support
 
 0.12 2011-03-24
   - gpsd 2.96 protocol 3.4 support
