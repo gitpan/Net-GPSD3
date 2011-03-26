@@ -3,13 +3,30 @@ use strict;
 use warnings;
 use base qw{Net::GPSD3::Return::Unknown};
 
-our $VERSION='0.12';
+our $VERSION='0.14';
 
 =head1 NAME
 
 Net::GPSD3::Return::VERSION - Net::GPSD3 Return VERSION Object
 
 =head1 SYNOPSIS
+
+  use Net::GPSD3;
+  my $gpsd=Net::GPSD3->new;
+  $gpsd->poll; #Sets VERSION and DEVICES in cache
+  my $v=$gpsd->cache->VERSION;
+  printf "Class: %s\nRelease: %s\nRevision: %s\nProtocol: %s\n", 
+         $v->class,
+         $v->release,
+         $v->revision,
+         $v->protocol;
+
+Returns something like this.
+
+  Class: VERSION
+  Release: 2.96~dev
+  Revision: 2011-03-17T02:51:23
+  Protocol: 3.4
 
 =head1 DESCRIPTION
 
@@ -27,7 +44,7 @@ Returns the JSON string
 
 =head2 parent
 
-Return the parent Net::GPSD object
+Return the parent L<Net::GPSD3> object
 
 =head2 release
 

@@ -8,7 +8,7 @@ use Net::GPSD3::Return::Unknown;
 use Net::GPSD3::Cache;
 use DateTime;
 
-our $VERSION='0.13';
+our $VERSION='0.14';
 
 =head1 NAME
 
@@ -22,6 +22,10 @@ Net::GPSD3 - Interface to the gpsd server daemon protocol versions 3 (JSON).
   my $gpsd=Net::GPSD3->new;
   $gpsd->watch;
 
+One Liner
+
+  perl -MNet::GPSD3 -e 'Net::GPSD3->new->watch'
+
 =head2 Poll Interface
 
   use Net::GPSD3;
@@ -30,13 +34,10 @@ Net::GPSD3 - Interface to the gpsd server daemon protocol versions 3 (JSON).
   my $poll=$gpsd->poll;
   print Dumper($poll);
 
-The Perl one liner
+One Liner
 
-  perl -MNet::GPSD3 -e 'Net::GPSD3->new->watch'
+  perl -MNet::GPSD3 -e 'printf "Protocol: %s\n", Net::GPSD3->new->poll->parent->cache->VERSION->protocol;'
 
-Which Protocol is my gpsd using
-
-  perl -MNet::GPSD3 -e '$gpsd=Net::GPSD3->new; $gpsd->poll; printf "Protocol: %s\n", $gpsd->cache->VERSION->protocol;'
   Protocol: 3.4
 
 =head1 DESCRIPTION
@@ -92,9 +93,11 @@ sub port {
 
 =head2 poll
 
-Send a Poll request to the gpsd server and returns a POLL object. The method also populates the cache object with the VERISON and DEVICES objects.
+Sends a Poll request to the gpsd server and returns a L<Net::GPSD3::Return::POLL> object. The method also populates the cache object with the L<Net::GPSD3::Return::VERISON> and L<Net::GPSD3::Return::DEVICES> objects.
 
   my $poll=$gpsd->poll; #isa Net::GPSD3::Return::POLL object
+
+Note: In order to use the poll method consistently you should run the GPSD daemon as a service.  You may also need to run the daemon with the "-n" option.
 
 =cut
 
@@ -109,7 +112,7 @@ sub poll {
     chomp $line;
     $object=$self->constructor($self->decode($line), string=>$line);
     $self->cache->add($object) unless $object->class eq "POLL";
-  } until $object->class eq "POLL";
+  } until $object->class eq "POLL"; #this needs more logic
   return $object;
 }
 
@@ -118,7 +121,6 @@ sub poll {
 Calls all handlers that are registered in the handler method.
 
   $gpsd->watch;  #will not return unless something goes wrong.
-  
 
 =cut
 
@@ -126,13 +128,13 @@ sub watch {
   my $self=shift;
   my @handler=$self->handlers;
   push @handler, \&default_handler unless scalar(@handler);
-  #$self->socket->send(qq(?DEVICES;\n));
+  #$self->socket->send(qq(?DEVICES;\n)); #appears this is now done in the daemon
   $self->socket->send(qq(?WATCH={"enable":true,"json":true};\n));
   my $object;
   #man 8 gpsd - Each request returns a line of response text ended by a CR/LF.
   local $/="\r\n";
   my $line;
-  while (defined($line=$self->socket->getline)) { #This currently reads VERSION but that means that VERSION
+  while (defined($line=$self->socket->getline)) { #Reads VERSION and DEVICES object too.
     #print "$line\n";
     chomp $line;
     my $object=$self->constructor($self->decode($line), string=>$line);
@@ -179,7 +181,7 @@ sub handlers {
 
 =head2 cache
 
-Returns the L<Net::GPSD3::Cache> caching object
+Returns the L<Net::GPSD3::Cache> caching object.
 
 =cut
 
@@ -204,7 +206,7 @@ sub default_handler {
     printf "%s: %s, Time: %s, Lat: %s, Lon: %s, Speed: %s, Heading: %s\n",
              DateTime->now,
              $object->class,
-             $object->time,
+             $object->timestamp,
              $object->lat,
              $object->lon,
              $object->speed,
@@ -233,7 +235,7 @@ sub default_handler {
     printf "%s: %s, Enabled: %s\n",
              DateTime->now,
              $object->class,
-             $object->enable;
+             $object->enabled;
   } elsif ($object->class eq "DEVICES") {
     my @device=$object->Devices;
     foreach my $device (@device) {
@@ -368,9 +370,10 @@ Log on RT and Send to gpsd-dev email list
 
 There are no two GPS devices that are alike.  Each GPS device has a different GPSD signature as well. If your GPS device does not work out of the box with this package, please send me a log of your devices JSON sentences.
 
-  echo '?POLL;' | nc gpsd.mainframe.cx 2947
+  echo '?POLL;' | nc 127.0.0.1 2947
 
-  echo '?WATCH={"enable":true,"json":true};' | nc gpsd.mainframe.cx 2947
+  telnet 127.0.0.1 2947
+  ?WATCH={"enable":true,"json":true};
 
 =head1 SUPPORT
 

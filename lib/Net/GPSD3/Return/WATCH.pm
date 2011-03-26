@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use base qw{Net::GPSD3::Return::Unknown};
 
-our $VERSION='0.12';
+our $VERSION='0.14';
 
 =head1 NAME
 
@@ -27,7 +27,7 @@ Returns the JSON string
 
 =head2 parent
 
-Return the parent Net::GPSD object
+Return the parent L<Net::GPSD3> object
 
 =head2 enabled
 

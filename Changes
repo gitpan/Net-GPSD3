@@ -1,10 +1,17 @@
 Revision history for Perl module Net::GPSD3
 
 TODO
-  - Write a POE capability interface
+  - Write a POE capable interface
   - Support SUBFRAME object better
-  - Support GST object better
-  - Add Tests for many gps devices
+  - Add Tests for many GPS devices
+  - Add a capability for handlers to turn off watcher mode.
+
+0.14 2011-03-26
+  - Added Documentation and Examples
+  - Added poll->tpv alias for poll->fix method
+  - Updated support for GST object
+  - Updated perl-Net-GPSD3-poll.pl to show much more data
+  - Updated default handler changed tpv->time to tpv->timestamp
 
 0.13 2011-03-25
   - Added poll->fix method
@@ -16,7 +23,7 @@ TODO
 
 0.12 2011-03-24
   - gpsd 2.96 protocol 3.4 support
-    - Do not expect the protocol to stablize until gpsd 3.00
+    - Do not expect the protocol to stabilize until gpsd 3.00
   - Added support for new POLL interface
   - Added support for SUBFRAME object
   - Updated objects to support new W3C timestamp format

@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use base qw{Net::GPSD3::Return::Unknown::Timestamp};
 
-our $VERSION='0.13';
+our $VERSION='0.14';
 
 =head1 NAME
 
@@ -13,7 +13,7 @@ Net::GPSD3::Return::GST - Net::GPSD3 Return GST Object
 
 =head1 DESCRIPTION
 
-Provides a Perl object interface to the GST object returned by the GPSD daemon.
+Provides a Perl object interface to the GST (GPS Pseudorange Noise Statistics) object returned by the GPSD daemon.
 
   {
     'class' => 'GST',
@@ -41,7 +41,7 @@ Returns the JSON string
 
 =head2 parent
 
-Return the parent Net::GPSD object
+Returns the parent L<Net::GPSD3> object
 
 =head2 device
 
@@ -57,11 +57,51 @@ sub tag {shift->{"tag"}};
 
 =head2 time
 
+Returns a unix epoch time
+
 =head2 timestamp
+
+Returns a W3C formated date
 
 =head2 datetime
 
+Returns a L<DateTime> object
+
+=head2 rms
+
+Total RMS standard deviation of ranges inputs to the navigation solution
+
+=cut
+
+sub rms {shift->{"rms"}};
+
+=head2 major
+
+Standard deviation (meters) of semi-major axis of error ellipse
+
+=cut
+
+sub major {shift->{"major"}};
+
+=head2 minor
+
+Standard deviation (meters) of semi-minor axis of error ellipse
+
+=cut
+
+sub minor {shift->{"minor"}};
+
+=head2 orient
+
+Orientation of semi-major axis of error ellipse (true north degrees)
+
+=cut
+
+sub orient {shift->{"orient"}};
+
 =head2 lat
+
+Standard deviation (meters) of latitude error
 
 =cut
 
@@ -69,11 +109,15 @@ sub lat {shift->{"lat"}};
 
 =head2 lon
 
+Standard deviation (meters) of longitude error
+
 =cut
 
 sub lon {shift->{"lon"}};
 
 =head2 alt
+
+Standard deviation (meters) of altitude error
 
 =cut
 

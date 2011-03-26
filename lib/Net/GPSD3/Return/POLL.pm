@@ -3,13 +3,19 @@ use strict;
 use warnings;
 use base qw{Net::GPSD3::Return::Unknown::Timestamp};
 
-our $VERSION='0.13';
+our $VERSION='0.14';
 
 =head1 NAME
 
 Net::GPSD3::Return::POLL - Net::GPSD3 Return POLL Object
 
 =head1 SYNOPSIS
+
+  use Net::GPSD3;
+  use Data::Dumper qw{Dumper};
+  my $gpsd = Net::GPSD3->new;
+  my $poll = $gpsd->poll;
+  print Dumper($poll);
 
 =head1 DESCRIPTION
 
@@ -27,7 +33,7 @@ Returns the JSON string
 
 =head2 parent
 
-Return the parent Net::GPSD object
+Return the parent L<Net::GPSD3> object
 
 =head2 time
 
@@ -41,7 +47,7 @@ Return the parent Net::GPSD object
 
 sub active {shift->{"active"}};
 
-=head2 fix
+=head2 fix, tpv
 
 Returns the first fix from the Fixes array or undef if none.
 
@@ -52,6 +58,7 @@ Note: I will try to keep this method consistant
 =cut
 
 sub fix {shift->Fixes->[0]};
+sub tpv {shift->Fixes->[0]};
 
 =head2 Fixes
 
@@ -139,11 +146,11 @@ sub _gst {
 
 =head1 BUGS
 
-DavisNetworks.com supports all Perl applications including this package.
-
 Log on RT and send to gpsd-dev email list
 
 =head1 SUPPORT
+
+DavisNetworks.com supports all Perl applications including this package.
 
 Try gpsd-dev email list
 
