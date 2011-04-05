@@ -11,6 +11,9 @@ WriteMakefile(
                      'IO::Socket::INET6'        => 0,
                      'DateTime'                 => 0,
                      'DateTime::Format::W3CDTF' => 0.06, #factional seconds
+                     'POE::Session'             => 0,
+                     'POE::Wheel::ReadWrite'    => 0,
+                     'POE::Filter::Line'        => 0,
                     },
 
     EXE_FILES    => [
@@ -18,6 +21,7 @@ WriteMakefile(
                        scripts/perl-Net-GPSD3-Example.pl
                        scripts/perl-Net-GPSD3-Handler.pl
                        scripts/perl-Net-GPSD3-poll.pl
+                       scripts/perl-Net-GPSD3-POE-Example.pl
                       }
                     ],
 

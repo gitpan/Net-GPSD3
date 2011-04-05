@@ -1,10 +1,20 @@
 Revision history for Perl module Net::GPSD3
 
 TODO
-  - Write a POE capable interface
-  - Support SUBFRAME object better
+  - Support SUBFRAME objects better
   - Add Tests for many GPS devices
   - Add a capability for handlers to turn off watcher mode.
+  - Consolidate code between Net::GPSD3->watch and Net::GPSD::POE->session
+  - Figure out how to test POE interface
+  - Figure out a better way to use the default handlers
+
+0.15 2011-04-05
+  - Added POE::Session capability
+    - Added Net::GPSD3::POE->session
+    - Updated tests
+    - Fixed Net::GPSD3->constructor to support inheritance
+    - Added POE script example
+  - Update script documentation
 
 0.14 2011-03-26
   - Added Documentation and Examples

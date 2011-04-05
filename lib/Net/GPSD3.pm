@@ -8,7 +8,8 @@ use Net::GPSD3::Return::Unknown;
 use Net::GPSD3::Cache;
 use DateTime;
 
-our $VERSION='0.14';
+our $VERSION='0.15';
+our $PACKAGE=__PACKAGE__;
 
 =head1 NAME
 
@@ -39,6 +40,10 @@ One Liner
   perl -MNet::GPSD3 -e 'printf "Protocol: %s\n", Net::GPSD3->new->poll->parent->cache->VERSION->protocol;'
 
   Protocol: 3.4
+
+=head2 POE Interface
+
+See L<Net::GPSD3::POE>
 
 =head1 DESCRIPTION
 
@@ -353,7 +358,7 @@ sub constructor {
   my $self=shift;
   my %data=@_;
   $data{"class"}||="undef";
-  my $class=join("::", ref($self), "Return", $data{"class"});
+  my $class=join("::", $PACKAGE, "Return", $data{"class"});
   my $object;
   eval("use $class");
   if ($@) { #Failed to load class
@@ -372,8 +377,7 @@ There are no two GPS devices that are alike.  Each GPS device has a different GP
 
   echo '?POLL;' | nc 127.0.0.1 2947
 
-  telnet 127.0.0.1 2947
-  ?WATCH={"enable":true,"json":true};
+  echo '?WATCH={"enable":true,"json":true};' | socat -t10 stdin stdout | nc 127.0.0.1 2947
 
 =head1 SUPPORT
 
@@ -399,7 +403,7 @@ The full text of the license can be found in the LICENSE file included with this
 
 =head1 SEE ALSO
 
-L<Net::GPSD>, L<GPS::Point>, L<JSON::XS>, L<IO::Socket::INET6>, L<DateTime>
+L<Net::GPSD>, L<Net::GPSD3::POE>, L<GPS::Point>, L<JSON::XS>, L<IO::Socket::INET6>, L<DateTime>
 
 =cut
 

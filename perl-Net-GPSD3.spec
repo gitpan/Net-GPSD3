@@ -1,6 +1,6 @@
 Name:           perl-Net-GPSD3
-Version:        0.14
-Release:        4%{?dist}
+Version:        0.15
+Release:        1%{?dist}
 Summary:        Interface to the gpsd server daemon protocol version 3.4 (JSON)
 License:        Distributable, see LICENSE
 Group:          Development/Libraries

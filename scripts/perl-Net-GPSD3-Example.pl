@@ -18,17 +18,15 @@ $gpsd->watch;             #default handler
 
 =head1 EXAMPLE OUTPUT
 
-  VERSION, Release: 2.40dev
-  WATCH, Enabled: 1
-  TPV, Time: 1253342731.614, Lat: 38.94892, Lon: -77.350908333, Speed: 0.057, Heading: 130.91
-  SKY, Time: 1253342732.614, Satellites: 10, Used: 3, PRNs: 18,27,15
-  TPV, Time: 1253342732.614, Lat: 38.94892, Lon: -77.35091, Speed: 0.062, Heading: 132.86
-  TPV, Time: 1253342733.613, Lat: 38.94892, Lon: -77.35091, Speed: 0.057, Heading: 135.8
-  TPV, Time: 1253342734.613, Lat: 38.948921667, Lon: -77.350911667, Speed: 0.046, Heading: 125
-  TPV, Time: 1253342735.613, Lat: 38.948923333, Lon: -77.350911667, Speed: 0.051, Heading: 126.35
-  TPV, Time: 1253342736.613, Lat: 38.948923333, Lon: -77.350913333, Speed: 0.057, Heading: 123.28
-  SKY, Time: 1253342737.613, Satellites: 10, Used: 3, PRNs: 18,27,15
-  TPV, Time: 1253342737.613, Lat: 38.948923333, Lon: -77.350913333, Speed: 0.051, Heading: 132.91
-  TPV, Time: 1253342738.613, Lat: 38.948923333, Lon: -77.350915, Speed: 0.057, Heading: 124.61
+  2011-04-05T05:39:05: VERSION, GPSD: 2.96~dev (2011-03-17T02:51:23), Net::GPSD3: 0.15
+  2011-04-05T05:39:05: DEVICES, Devices: /dev/cuaU0 (9600 bps uBlox UBX binary-none)
+  2011-04-05T05:39:05: WATCH, Enabled: 1
+  2011-04-05T05:39:05: TPV, Time: 2011-04-05T05:39:05.00Z, Lat: 37.371420332, Lon: -122.015185689, Speed: 0, Heading: 0
+  2011-04-05T05:39:06: TPV, Time: 2011-04-05T05:39:06.00Z, Lat: 37.371420332, Lon: -122.015185689, Speed: 0, Heading: 0
+  2011-04-05T05:39:07: TPV, Time: 2011-04-05T05:39:07.00Z, Lat: 37.371420332, Lon: -122.015185689, Speed: 0, Heading: 0
+  2011-04-05T05:39:08: TPV, Time: 2011-04-05T05:39:08.00Z, Lat: 37.371420332, Lon: -122.015185689, Speed: 0, Heading: 0
+  2011-04-05T05:39:08: SKY, Satellites: 11, Used: 6, PRNs: 28,24,8,15,26,135
+  2011-04-05T05:39:09: TPV, Time: 2011-04-05T05:39:09.00Z, Lat: 37.371420332, Lon: -122.015185689, Speed: 0, Heading: 0
+  2011-04-05T05:39:10: TPV, Time: 2011-04-05T05:39:10.00Z, Lat: 37.371420332, Lon: -122.015185689, Speed: 0, Heading: 0
 
 =cut
