@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Net-GPSD3
-version:             0.15
+version:             0.16
 abstract:            Interface to the gpsd server daemon protocol versions 3 (JSON).
 license:             ~
 author:              
@@ -14,6 +14,7 @@ requires:
     IO::Socket::INET6:             0
     JSON::XS:                      0
     POE::Filter::Line:             0
+    POE::Kernel:                   0
     POE::Session:                  0
     POE::Wheel::ReadWrite:         0
     Test::Simple:                  0.44

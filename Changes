@@ -8,6 +8,13 @@ TODO
   - Figure out how to test POE interface
   - Figure out a better way to use the default handlers
 
+0.16 2011-04-08
+  - Updated perl-Net-GPSD3-Handler.pl to use two handlers
+  - Updated POE interface based on feedback from Rocco Caputo <rcaputo@pobox.com>
+    - Switched from inline_states session to object_states session
+    - Added stop and shutdown capabilities
+    - Added POE methods pause and resume
+
 0.15 2011-04-05
   - Added POE::Session capability
     - Added Net::GPSD3::POE->session

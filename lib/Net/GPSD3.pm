@@ -8,7 +8,7 @@ use Net::GPSD3::Return::Unknown;
 use Net::GPSD3::Cache;
 use DateTime;
 
-our $VERSION='0.15';
+our $VERSION='0.16';
 our $PACKAGE=__PACKAGE__;
 
 =head1 NAME
@@ -134,7 +134,7 @@ sub watch {
   my @handler=$self->handlers;
   push @handler, \&default_handler unless scalar(@handler);
   #$self->socket->send(qq(?DEVICES;\n)); #appears this is now done in the daemon
-  $self->socket->send(qq(?WATCH={"enable":true,"json":true};\n));
+  $self->socket->send($self->_watch_string_on. "\n");
   my $object;
   #man 8 gpsd - Each request returns a line of response text ended by a CR/LF.
   local $/="\r\n";
@@ -143,12 +143,18 @@ sub watch {
     #print "$line\n";
     chomp $line;
     my $object=$self->constructor($self->decode($line), string=>$line);
-    foreach my $handler (@handler) {
-      &{$handler}($object);
-    }
+    $_->($object) foreach @handler;
     $self->cache($object); #cache after handler so that the last point is available to the handler.
   }
   return $self;
+}
+
+sub _watch_string_on {
+  return q(?WATCH={"enable":true,"json":true};);
+}
+
+sub _watch_string_off {
+  return q(?WATCH={"enable":false,"json":true};);
 }
 
 =head2 addHandler

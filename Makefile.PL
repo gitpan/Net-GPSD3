@@ -14,6 +14,7 @@ WriteMakefile(
                      'POE::Session'             => 0,
                      'POE::Wheel::ReadWrite'    => 0,
                      'POE::Filter::Line'        => 0,
+                     'POE::Kernel'              => 0,
                     },
 
     EXE_FILES    => [

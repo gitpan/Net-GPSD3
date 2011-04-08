@@ -5,8 +5,9 @@ use base qw{Net::GPSD3};
 use POE::Session;
 use POE::Wheel::ReadWrite;
 use POE::Filter::Line;
+use POE::Kernel; #exports $poe_kernel
 
-our $VERSION='0.15';
+our $VERSION='0.16';
 
 =head1 NAME
 
@@ -34,41 +35,88 @@ This package adds a L<POE::Session> capabilty to Net::GPSD3.
 
 =head2 session
 
-Configures and returns a POE::Session object
+Configures and returns the POE::Session ID
 
 =cut
 
 sub session {
   my $self=shift; #ISA Net::GPSD::POE
-  return POE::Session->create(
-    inline_states => {
-      _start      => sub {
-                           my $heap=$_[HEAP];
-                           $heap->{"wheel"}=POE::Wheel::ReadWrite->new(
-                             Handle => $self->socket,
-                             Filter => POE::Filter::Line->new(
-                                         InputLiteral  => "\r\n",
-                                         OutputLiteral => "\n",
-                             ),
-                             InputEvent => "got_event",
-                           );
-                           $heap->{"wheel"}->put(qq(?WATCH={"enable":true,"json":true};));
-                           $heap->{"gpsd"}=$self;
-                         },
-      got_event   => \&_event_handler,
-    },
+  $self->{"session"}=POE::Session->create(
+    object_states => [
+      $self         => {
+        _start      => '_session_start',
+        _stop       => '_session_stop',
+        shutdown    => '_session_shutdown',
+        input_event => '_event_handler',
+        pause       => 'pause',
+        resume      => 'resume',
+      }])->ID unless $self->{"session"};
+  return $self->{"session"};
+}
+
+sub _session_start {
+  my $self=shift;
+  $self->{"wheel"}=POE::Wheel::ReadWrite->new(
+    InputEvent => "input_event",
+    Handle     => $self->socket,
+    Filter     => POE::Filter::Line->new(
+      InputLiteral  => "\r\n",
+      OutputLiteral => "\n",
+    ),
   );
+  $self->resume;
+  return $self;
+}
+
+=head2 resume
+
+Resumes or starts the watcher stream but not the socket
+
+=cut
+
+sub resume {
+  my $self=shift;
+  if ($self->{"wheel"}) {
+    $self->{"wheel"}->put($self->_watch_string_on);
+    delete $self->{"paused"} if exists $self->{"paused"};
+  }
+  return $self;
+}
+
+=head2 pause
+
+Pauses or turns off the watcher stream but not the socket
+
+=cut
+
+sub pause {
+  my $self=shift;
+  unless ($self->{"paused"}) {
+    $self->{"wheel"}->put($self->_watch_string_off)
+      if $self->{"wheel"};
+    $self->{"paused"}=1; #Should we get this from the WATCH return?
+  }
+  return $self;
+}
+
+sub _session_stop {
+  my $self=shift;
+  $poe_kernel->call($self->{"session"}, "shutdown")
+    if $self->{"session"};
+  return $self;
+}
+
+sub _session_shutdown {
+  my $self=$_[OBJECT];
+  return delete $self->{"wheel"};
 }
 
 sub _event_handler {
-  my ($heap, $line)=@_[HEAP, ARG0];
-  my $self=$heap->{"gpsd"}; #ISA NET::GPSD::POE;
+  my ($self, $line)=@_[OBJECT, ARG0];
   my @handler=$self->handlers;
   push @handler, \&Net::GPSD3::default_handler unless scalar(@handler);
   my $object=$self->constructor($self->decode($line), string=>$line);
-  foreach my $handler (@handler) {
-    &{$handler}($object);
-  }
+  $_->($object) foreach @handler;
   $self->cache($object);
   return $self;
 }
