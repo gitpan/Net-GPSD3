@@ -2,7 +2,6 @@ Changes
 lib/Net/GPSD3.pm
 lib/Net/GPSD3/Base.pm
 lib/Net/GPSD3/Cache.pm
-lib/Net/GPSD3/POE.pm
 lib/Net/GPSD3/Return/DEVICE.pm
 lib/Net/GPSD3/Return/DEVICES.pm
 lib/Net/GPSD3/Return/ERROR.pm
@@ -23,7 +22,6 @@ README
 scripts/perl-Net-GPSD3-Example.pl
 scripts/perl-Net-GPSD3-Handler.pl
 scripts/perl-Net-GPSD3-poll.pl
-scripts/perl-Net-GPSD3-POE-Example.pl
 t/001_load.t
 t/002_ERROR.t
 t/003_TPV.t

@@ -1,11 +1,10 @@
 # -*- perl -*-
 
-use Test::More tests => 58;
+use Test::More tests => 54;
 
 BEGIN { use_ok( 'Net::GPSD3' ); }
 BEGIN { use_ok( 'Net::GPSD3::Base' ); }
 BEGIN { use_ok( 'Net::GPSD3::Cache' ); }
-BEGIN { use_ok( 'Net::GPSD3::POE' ); }
 BEGIN { use_ok( 'Net::GPSD3::Return::DEVICE' ); }
 BEGIN { use_ok( 'Net::GPSD3::Return::DEVICES' ); }
 BEGIN { use_ok( 'Net::GPSD3::Return::ERROR' ); }
@@ -28,11 +27,6 @@ isa_ok ($object, 'Net::GPSD3::Base');
 
 $object = Net::GPSD3::Cache->new();
 isa_ok ($object, 'Net::GPSD3::Cache');
-isa_ok ($object, 'Net::GPSD3::Base');
-
-$object = Net::GPSD3::POE->new();
-isa_ok ($object, 'Net::GPSD3::POE');
-isa_ok ($object, 'Net::GPSD3');
 isa_ok ($object, 'Net::GPSD3::Base');
 
 $object = Net::GPSD3::Return::DEVICE->new();

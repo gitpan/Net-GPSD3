@@ -1,5 +1,5 @@
 Name:           perl-Net-GPSD3
-Version:        0.16
+Version:        0.17
 Release:        1%{?dist}
 Summary:        Interface to the gpsd server daemon protocol versions 3 (JSON)
 License:        BSD
@@ -15,10 +15,6 @@ Requires:       perl(DateTime::Format::W3CDTF) >= 0.06
 Requires:       perl(GPS::Point) >= 0.10
 Requires:       perl(IO::Socket::INET6)
 Requires:       perl(JSON::XS)
-Requires:       perl(POE::Filter::Line)
-Requires:       perl(POE::Kernel)
-Requires:       perl(POE::Session)
-Requires:       perl(POE::Wheel::ReadWrite)
 Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 
 %description

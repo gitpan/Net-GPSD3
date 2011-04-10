@@ -8,7 +8,7 @@ use Net::GPSD3::Return::Unknown;
 use Net::GPSD3::Cache;
 use DateTime;
 
-our $VERSION='0.16';
+our $VERSION='0.17';
 our $PACKAGE=__PACKAGE__;
 
 =head1 NAME
