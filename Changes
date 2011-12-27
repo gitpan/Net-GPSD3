@@ -6,6 +6,14 @@ TODO
   - Add a capability for handlers to turn off watcher mode.
   - Consolidate code between Net::GPSD3->watch and Net::GPSD::POE->session
   - Figure out a better way to use the default handlers
+  - Review time vs. datetime
+    - Figure out if we can drop DateTime due to the load time.
+    - Figure out if we can make DateTime a runtime requirement.
+
+0.18 2011-09-26
+  - Fixed POLL method GPSD API change - RT 73489 ryan from presslab.us
+  - Dropped EXE_FILES section from Makefile.PL - RT 70414 - fschlich at cis.fu-berlin.de 
+  - Fixed spelling issues in pod - RT 70410 - fschlich at cis.fu-berlin.de
 
 0.17 2011-04-10
   - Moved Net::GPSD3::POE to separate package

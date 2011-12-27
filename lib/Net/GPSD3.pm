@@ -8,7 +8,7 @@ use Net::GPSD3::Return::Unknown;
 use Net::GPSD3::Cache;
 use DateTime;
 
-our $VERSION='0.17';
+our $VERSION='0.18';
 our $PACKAGE=__PACKAGE__;
 
 =head1 NAME
@@ -47,7 +47,7 @@ See L<Net::GPSD3::POE>
 
 =head1 DESCRIPTION
 
-Net::GPSD3 provides an object client interface to the gpsd server daemon utilizing the version 3 protocol. gpsd is an open source GPS deamon from http://gpsd.berlios.de/.  Support for Version 3 of the protocol (JSON) was adding to the daemon in version 2.90.  If your daemon is before 2.90 (protocol 2.X), please use the L<Net::GPSD> package.
+Net::GPSD3 provides an object client interface to the gpsd server daemon utilizing the version 3 protocol. gpsd is an open source GPS daemon from http://gpsd.berlios.de/.  Support for Version 3 of the protocol (JSON) was added to the daemon in version 2.90.  If your daemon is before 2.90 (protocol 2.X), please use the L<Net::GPSD> package.
 
 =head1 CONSTRUCTOR
 

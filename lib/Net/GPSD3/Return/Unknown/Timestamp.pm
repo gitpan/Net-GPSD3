@@ -5,7 +5,7 @@ use base qw{Net::GPSD3::Return::Unknown};
 use DateTime::Format::W3CDTF;
 use DateTime;
 
-our $VERSION='0.12';
+our $VERSION='0.18';
 
 =head1 NAME
 
@@ -28,7 +28,7 @@ Seconds since the Unix epoch, UTC.  The value may have a fractional part of up t
 
 Note: In 2.96 (protocol 3.4) the TPV->time format changed from unix epoch to W3C, but this method attempts to hide that change from the user.
 
-Since the POXIS standard for the Unix epoch does not use leap seconds but GPS system does I do not recommend that you use this method for time display or storage.  This method is purely here for backwards compatability.
+Since the POSIX standard for the Unix epoch does not use leap seconds but GPS system does I do not recommend that you use this method for time display or storage.  This method is purely here for backwards compatibility.
 
 =cut
 

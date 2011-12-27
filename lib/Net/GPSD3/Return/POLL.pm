@@ -80,6 +80,7 @@ sub Fixes {
 
 sub _fixes {
   my $self=shift;
+  $self->{"fixes"}=delete($self->{"tpv"}) if exists $self->{"tpv"}; #RT 73489
   $self->{"fixes"}=[] unless ref($self->{"fixes"}) eq "ARRAY";
   return wantarray ? @{$self->{"fixes"}} : $self->{"fixes"};
 }
@@ -116,6 +117,7 @@ sub Skyviews {
 
 sub _skyviews {
   my $self=shift;
+  $self->{"skyviews"}=delete($self->{"sky"}) if exists $self->{"sky"}; #RT 73489
   $self->{"skyviews"}=[] unless ref($self->{"skyviews"}) eq "ARRAY";
   return wantarray ? @{$self->{"skyviews"}} : $self->{"skyviews"};
 }

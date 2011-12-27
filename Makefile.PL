@@ -12,13 +12,4 @@ WriteMakefile(
                      'DateTime'                 => 0,
                      'DateTime::Format::W3CDTF' => 0.06, #factional seconds
                     },
-
-    EXE_FILES    => [
-                    qw{
-                       scripts/perl-Net-GPSD3-Example.pl
-                       scripts/perl-Net-GPSD3-Handler.pl
-                       scripts/perl-Net-GPSD3-poll.pl
-                      }
-                    ],
-
 );

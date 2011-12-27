@@ -8,7 +8,7 @@ my $string='{
   "class":"POLL",
   "timestamp":"2011-03-20T04:12:25.64Z",
   "active":1,
-  "tpv":[
+  "fixes":[
     {
       "class":"TPV",
       "tag":"0x0130",
@@ -32,7 +32,7 @@ my $string='{
       "class":"GST","tag":"0x0130","device":"/dev/cuaU0","time":"1970-01-01T00:00:00.00Z",
       "rms":0.000,"major":0.000,"minor":0.000,"orient":0.000,"lat":0.000,"lon":0.000,"alt":0.000
   }],
-  "sky":[
+  "skyviews":[
     {
       "class":"SKY",
       "tag":"0x0130",

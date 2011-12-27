@@ -5,8 +5,8 @@ use Net::GPSD3;
 use Data::Dumper qw{Dumper};
 $|=1;
 
-my $host  = shift || undef; #you can pass zero
-my $port  = shift || undef; #you can pass zero
+my $host  = shift || undef; #you can pass zero or ""
+my $port  = shift || undef; #you can pass zero or ""
 our $debug = shift || 0;
 
 =head1 NAME

@@ -31,6 +31,7 @@ t/006_DEVICES.t
 t/007_DEVICE.t
 t/008_VERSION.t
 t/009_POLL.t
+t/009_POLL_transitional.t
 t/009_WATCH.t
 t/010_SUBFRAME.t
 Todo
