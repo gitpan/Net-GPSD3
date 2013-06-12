@@ -10,6 +10,13 @@ TODO
     - Figure out if we can drop DateTime due to the load time.
     - Figure out if we can make DateTime a runtime requirement.
 
+0.19 2011-12-29
+  - Added use strict and use warnings to all tests - RT 73612
+  - Fixed spec version
+
+0.18_2 2011-09-26
+  - Updated GPSD URL
+
 0.18 2011-09-26
   - Fixed POLL method GPSD API change - RT 73489 ryan from presslab.us
   - Dropped EXE_FILES section from Makefile.PL - RT 70414 - fschlich at cis.fu-berlin.de 

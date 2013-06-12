@@ -1,5 +1,7 @@
 # -*- perl -*-
 
+use strict;
+use warnings;
 use Test::More tests => 7;
 
 BEGIN { use_ok( 'Net::GPSD3' ); }

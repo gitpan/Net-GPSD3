@@ -1,5 +1,7 @@
 # -*- perl -*-
 
+use strict;
+use warnings;
 use Test::More tests => 18;
 
 BEGIN { use_ok( 'JSON::XS' ); }

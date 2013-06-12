@@ -1,5 +1,7 @@
 # -*- perl -*-
 
+use strict;
+use warnings;
 use Test::More tests => 30;
 
 BEGIN { use_ok( 'Net::GPSD3' ); }
@@ -10,7 +12,7 @@ isa_ok ($gpsd, 'Net::GPSD3');
 #my $string=q({"class":"TPV","tag":"RMC","device":"/dev/ttyUSB0","time":1253334480.119,"ept":0.005,"lat":38.949656667,"lon":-77.350946667,"epx":750.000,"epy":750.000,"epv":1150.000,"track":17.0300,"speed":0.211,"mode":3});
 my $string='{"class":"TPV","tag":"0x0106","device":"/dev/cuaU0","time":"2011-03-20T06:51:59.12Z","ept":0.005,"lat":37.371427205,"lon":-122.015179890,"alt":25.789,"epx":1.926,"epy":1.808,"epv":6.497,"track":0.0000,"speed":0.000,"climb":0.000,"eps":3.85,"mode":3}';
 
-$object=$gpsd->constructor($gpsd->decode($string), string=>$string);
+my $object=$gpsd->constructor($gpsd->decode($string), string=>$string);
 isa_ok($object, 'Net::GPSD3::Return::TPV');
 isa_ok($object->parent, 'Net::GPSD3');
 is($object->string, $string, 'string');
